@@ -24,6 +24,7 @@ World.prototype.goNextLevel = function(mobsState, itemsState) {
     this.addNewRoom();
   }
   this.room = this.roomsArray[this.currentRoomIndex];
+  return true;
 };
 
 /*
@@ -34,12 +35,13 @@ World.prototype.goPreviousLevel = function(mobsState, itemsState) {
   this.room.saveState(mobsState, itemsState);
   if (0 <= this.currentRoomIndex - 1) {
     this.room = this.roomsArray[--this.currentRoomIndex];
+    return true;
   }
+  return false;
 };
 
 /*
  * @desc create and add a new room to the chain
- * @return bool - success or failure
  */
 World.prototype.addNewRoom = function() {
   var newRoom = new Room('maze', 9).init();

@@ -35,11 +35,11 @@ document.body.onkeydown = function(event) {
   var keycode = event.charCode || event.keyCode;
   if (keycode === 37) {
     console.log('<');
-    world.goPreviousLevel();
+    console.log(world.goPreviousLevel());
     world.room.map.print();
   } else if (keycode === 39) {
     console.log('>');
-    world.goNextLevel();
+    console.log(world.goNextLevel());
     world.room.map.print();
   } else {
     console.log('~');
