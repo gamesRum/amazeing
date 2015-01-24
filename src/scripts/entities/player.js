@@ -18,5 +18,5 @@ Player.prototype.update = function() {
 
 Player.prototype.attack = function(entity) {
   console.log('Attacking:', entity);
-  entity.damage(this.stats.str);
+  return entity.damage(this.stats.str);
 };
