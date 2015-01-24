@@ -55,3 +55,11 @@ World.prototype.print = function() {
   });
   console.log(line.join(''));
 };
+
+World.prototype.getPlayerSpawnPoint = function() {
+  console.warn('playerSpawnPoint is not ready yet!');
+  return {
+    x: 1,
+    y: 1
+  };
+};
