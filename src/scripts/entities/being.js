@@ -21,6 +21,8 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
     y: 1
   };
 
+  this.orientation = 0;
+
   this.moving = false;
   this.sprite = null;
   this.stats =  {
