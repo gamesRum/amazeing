@@ -8,32 +8,40 @@ Play.prototype = Object.create(Phaser.State.prototype);
 Play.prototype.constructor = Play;
 
 var Room = require('../entities/room');
+var Player = require('../entities/player');
 
 Play.prototype.map = {
-  walkable: null,
   level: null,
+  size: 15,
   tile: {
     height: 32,
     width: 32
   },
-  size: 15
+  walkable: null
 };
 
-Play.prototype.player = {
-  sprite: null,
-  moving: false,
-  animating: false,
-  location: {
-    x: 1,
-    y: 1
-  },
-  height: 32,
-  width: 32
+Play.prototype.player = new Player(100, 'joan', 'male');
+
+Play.prototype.updateStats = function() {
+  var statusBar = document.getElementById("status");
+  statusBar.innerHTML = '';
+
+  function addText(label, value) {
+    var span = document.createElement('span');
+    span.innerHTML= label + ': <strong>' + value + '</strong>';
+    statusBar.appendChild(span);
+  }
+
+  addText('Level', this.player.stats.level);
+  addText('HP', this.player.stats.hp);
+  addText('SP', this.player.stats.sp);
+  addText('$', this.player.stats.money);
 };
 
 Play.prototype.render = function() {
   this.game.time.advancedTiming = true;
-  this.game.debug.text(this.game.time.fps || '--', window.innerWidth-40, 14, "#ffffff");
+  this.game.debug.text(this.game.time.fps || '--', window.innerWidth-40, window.innerHeight-10, "#ffffff");
+  this.updateStats();
 };
 
 Play.prototype.drawMaze = function() {
@@ -76,6 +84,7 @@ Play.prototype.create = function() {
   this.game.physics.enable(this.player.sprite, Phaser.Physics.ARCADE);
   this.game.camera.follow(this.player.sprite);
   this.player.sprite.body.setSize(12, 16, 2, 0);
+  console.log(this.player);
   this.player.sprite.position.x = this.player.location.x * this.player.width;
   this.player.sprite.position.y = this.player.location.y * this.player.height;
   this.player.sprite.bringToTop();
@@ -85,10 +94,15 @@ Play.prototype.create = function() {
   this.player.sprite.animations.add('walk_right', [8,9,10,11], 10, true);
   this.player.sprite.animations.add('walk_up', [12,13,14,15], 10, true);
   this.player.sprite.animations.add('walk_down', [0,1,2,3], 10, true);
+  this.player.sprite.animations.add('attack', [16,17,18,19], 10, true);
 
   this.drawMaze();
 
   this.cursors = this.game.input.keyboard.createCursorKeys();
+  this.keys = {
+    spaceBar: this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
+    escape: this.game.input.keyboard.addKey(Phaser.Keyboard.ESC)
+  }
 };
 
 Play.prototype.startMoving = function() {
@@ -99,7 +113,7 @@ Play.prototype.stopMoving = function() {
   this.player.moving = false;
 };
 
-Play.prototype.movePlayer = function(left, top) {
+Play.prototype.movePlayer = function(left, top, action) {
   var locationBackup = {
     x: this.player.location.x,
     y: this.player.location.y
@@ -139,6 +153,12 @@ Play.prototype.movePlayer = function(left, top) {
 
     animation.onStart.add(this.startMoving, this)
     animation.onComplete.addOnce(this.stopMoving, this);
+
+    switch(action) {
+      case 'attack':
+        console.log('attack!');
+        break;
+    }
   }
 };
 
@@ -162,6 +182,11 @@ Play.prototype.update = function() {
       this.player.sprite.animations.play('walk_right');
     } else {
       this.player.sprite.animations.play('stand');
+    }
+
+    if(this.keys.spaceBar.isDown) {
+      this.movePlayer(0, 0, 'attack');
+      this.player.sprite.animations.play('attack');
     }
   }
 };

@@ -1,11 +1,39 @@
 'use strict';
 
-var Being = module.exports = function(maxHP, money, bagLength) {
-  this.maxHP = maxHP || 10;
-  this.hp = this.maxHP;
-  this.money = money || 0;
-  this.bag = [];
-  this.bagLength = bagLength || 10;
+var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
+  this.bag = {
+    items: [],
+    size: bagSize || 10
+  };
+
+  this.animating = false;
+
+  this.inventory= {
+    body: null,
+    head: null,
+    ring: null,
+    shield: null,
+    weapon: null
+  };
+
+  this.location= {
+    x: 1,
+    y: 1
+  };
+
+  this.moving = false;
+  this.sprite = null;
+  this.stats =  {
+    level: 0,
+    maxHP: maxHP || 10,
+    maxSP: maxSP || 10,
+    money: money || 0,
+    hp: maxHP || 10,
+    sp: maxSP || 10
+  };
+
+  this.height= 32;
+  this.width= 32;
 };
 
 Being.prototype.update = function() {
