@@ -2,7 +2,10 @@
 
 var cfg = require('../../config');
 
-var game = new Phaser.Game(cfg);
+var game = new Phaser.Game({
+    height: window.innerHeight,
+    width: window.innerWidth
+});
 
 game.state.add('boot', require('./states/boot'));
 game.state.add('preloader', require('./states/preloader'));

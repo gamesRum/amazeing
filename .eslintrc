@@ -1,7 +1,7 @@
 {
   "env": {
     "browser": true,
-    "node": true
+    "node": false
   },
   "rules": {
     // Possible Errors
@@ -115,6 +115,7 @@
     "no-plusplus": 1
   },
   "globals": {
-    "Phaser": false
+    "Phaser": false,
+    "window": false
   }
 }
