@@ -7,6 +7,8 @@ Preloader.prototype = Object.create(Phaser.State.prototype);
 Preloader.prototype.constructor = Preloader;
 
 Preloader.prototype.preload = function() {
+  this.game.load.spritesheet('tiles', 'img/telles0808_rpg_maker_tileset.png', 32, 32, 16*27);
+
   // var progressBar = this.add.sprite(
   //   this.world.centerX, this.world.centerY, 'progressBar'
   // );

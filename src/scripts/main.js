@@ -4,7 +4,8 @@ var cfg = require('../../config');
 
 var game = new Phaser.Game({
     height: window.innerHeight,
-    width: window.innerWidth
+    width: window.innerWidth,
+    parent: 'content'
 });
 
 game.state.add('boot', require('./states/boot'));
