@@ -19,7 +19,19 @@ Maze.prototype.constructor = Maze;
 Maze.prototype.generate = function() {
   this.map = this.generateEmpty();
 
-  /* First point where our algorithm will start */
+  var startPoint = this.getStartPoint();
+  this.map[startPoint.row][startPoint.column] = tiles.walkable;
+
+  this.generateOneStep(startPoint.row, startPoint.column);
+  // Growth code goes here...
+  return true;
+};
+
+/*
+ * @desc get a starting point within the map avoiding borders
+ * @return object - coordinates of starting point
+ */
+Maze.prototype.getStartPoint = function() {
   var row = utils.randomInt(this.size - 1, 1);
   while (row % 2 === 0) {
     row = utils.randomInt(this.size - 1, 1);
@@ -28,72 +40,75 @@ Maze.prototype.generate = function() {
   while (column % 2 === 0) {
     column = utils.randomInt(this.size - 1, 1);
   }
-  this.map[row][column] = tiles.walkable;
-
-  /* Start the magic, baby B-) */
-  generateWorld(row, column, this.map, this.size);
-  // add grow it here...
-  return true;
+  return {
+    row: row,
+    column: column
+  };
 };
 
-function generateWorld(row, col, maze, size) {
-  var randDirs = randomDirections();
+/*
+ * @desc perform calculations to decide if cast a tile into walkable or not
+ * @param int row - row where current step is located
+ * @param int col - column where current step is located
+ */
+Maze.prototype.generateOneStep = function(row, col) {
+  var randDirs = this.getRandomDirections(),
+    size = this.size,
+    map = this.map;
   for (var i = 0; i < randDirs.length; i += 1) {
     switch (randDirs[i]) {
-      case 1: // up
+      case 1: /* UP */
         if (row - 2 < 0) {
           continue;
         }
-        if (maze[row - 2][col] !== tiles.walkable) {
-          maze[row - 2][col] = tiles.walkable;
-          maze[row - 1][col] = tiles.walkable;
-          generateWorld(row - 2, col, maze, size);
+        if (map[row - 2][col] !== tiles.walkable) {
+          map[row - 2][col] = tiles.walkable;
+          map[row - 1][col] = tiles.walkable;
+          this.generateOneStep(row - 2, col);
         }
         break;
-      case 2: // right
+      case 2: /* RIGHT */
         if (col + 2 > size - 1) {
           continue;
         }
-        if (maze[row][col + 2] !== tiles.walkable) {
-          maze[row][col + 2] = tiles.walkable;
-          maze[row][col + 1] = tiles.walkable;
-          generateWorld(row, col + 2, maze, size);
+        if (map[row][col + 2] !== tiles.walkable) {
+          map[row][col + 2] = tiles.walkable;
+          map[row][col + 1] = tiles.walkable;
+          this.generateOneStep(row, col + 2);
         }
         break;
-      case 3: // down
+      case 3: /* DOWN */
         if (row + 2 > size - 1) {
           continue;
         }
-        if (maze[row + 2][col] !== tiles.walkable) {
-          maze[row + 2][col] = tiles.walkable;
-          maze[row + 1][col] = tiles.walkable;
-          generateWorld(row + 2, col, maze, size);
+        if (map[row + 2][col] !== tiles.walkable) {
+          map[row + 2][col] = tiles.walkable;
+          map[row + 1][col] = tiles.walkable;
+          this.generateOneStep(row + 2, col);
         }
         break;
-      case 4: // left
+      case 4: /* LEFT */
         if (col - 2 <= 0) {
           continue;
         }
-        if (maze[row][col - 2] !== tiles.walkable) {
-          maze[row][col - 2] = tiles.walkable;
-          maze[row][col - 1] = tiles.walkable;
-          generateWorld(row, col - 2, maze, size);
+        if (map[row][col - 2] !== tiles.walkable) {
+          map[row][col - 2] = tiles.walkable;
+          map[row][col - 1] = tiles.walkable;
+          this.generateOneStep(row, col - 2);
         }
         break;
     }
   }
-}
+};
 
-function randomDirections() {
-  function shuffle(o) {
-    for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-    return o;
+/*
+ * @desc generates a random sequence for numbers [1, 2, 3, 4]
+ * @return int[] - random sequence
+ */
+Maze.prototype.getRandomDirections = function() {
+  var seq = [1, 2, 3, 4];
+  for (var j, x, i = seq.length; i; j = Math.floor(Math.random() * i), x = seq[--i], seq[i] = seq[j], seq[j] = x) {
+    continue;
   }
-
-  var randoms = [];
-  for (var i = 0; i < 4; i += 1) {
-    randoms.push(i + 1);
-  }
-  return shuffle(randoms);
-}
-
+  return seq;
+};

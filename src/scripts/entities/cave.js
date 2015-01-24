@@ -39,35 +39,33 @@ Cave.prototype.polish = function() {
 
   for (var i = 0; i < smoothness; i++) {
     this.iterate(function(cell, x, y) {
-      var x_range = {
+      var xRange = {
         low: Math.max(0, x - 1),
         high: Math.min(size - 1, x + 1)
       };
-      var y_range = {
+      var yRange = {
         low: Math.max(0, y - 1),
         high: Math.min(size - 1, y + 1)
       };
-      var wall_count = 0;
-      for (var a = x_range.low; a <= x_range.high; a++) {
-        for (var b = y_range.low; b <= y_range.high; b++) {
-          if ((a == x) && (b == y)) {
+      var wallCount = 0;
+      for (var a = xRange.low; a <= xRange.high; a++) {
+        for (var b = yRange.low; b <= yRange.high; b++) {
+          if (a === x && b === y) {
             continue;
           }
-          wall_count += 1 - map[a][b];
+          wallCount += 1 - map[a][b];
         }
       }
 
-      if (((map[x][y] == 0) && (wall_count >= 4)) || ((map[x][y] == 1) && (wall_count >= 5)) ||
-        ((x == 0) || (y == 0) || (x == size - 1) || (y == size - 1))) {
+      if (map[x][y] === 0 && wallCount >= 4 || map[x][y] === 1 && wallCount >= 5 ||
+        x === 0 || y === 0 || x === size - 1 || y === size - 1) {
         map[x][y] = 0;
-      }
-      else {
+      } else {
         map[x][y] = 1;
       }
     });
   }
 };
-
 
 /*
  * @desc calculates ratio between walkable & nonWalkable tiles

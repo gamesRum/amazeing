@@ -105,14 +105,14 @@
     // Legacy
     "max-depth": [
       1,
-      2
+      3
     ],
     "max-len": [
       1,
       120,
       4
-    ],
-    "no-plusplus": 1
+    ]
+//    "no-plusplus": 1 // I really need it
   },
   "globals": {
     "Phaser": false,
