@@ -8,6 +8,14 @@ var World = module.exports = function(size) {
 };
 
 /*
+ * @desc this method should be overwritten
+ * @return []
+ */
+World.prototype.generate = function() {
+  throw 'World.prototype.generateEmpty should be overwritten';
+};
+
+/*
  * @desc generates an empty and nonWalkable map
  * @param int size - size of map
  * @return []

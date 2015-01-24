@@ -7,6 +7,10 @@ var Play = module.exports = function() {
 Play.prototype = Object.create(Phaser.State.prototype);
 Play.prototype.constructor = Play;
 
+var Room = require('../entities/room');
+var myLevel = new Room('maze');
+myLevel.init();
+
 Play.prototype.map = {
   height: 11,
   width: 11
@@ -34,17 +38,12 @@ Play.prototype.drawMaze = function() {
 
   this.game.world.setBounds(0, 0, map_width, map_height);
 
-  for (var i = 0; i <= this.map.width; i += 1) {
-    for (var j = 0; j <= this.map.height; j += 1) {
-      if(Math.floor((Math.random() * 100) + 1) > 75) {
-        this.walls.create(i*32, j*32, 'tiles', 264);
-      } else {
-        if (Math.floor((Math.random() * 100) + 1) > 80) {
-          this.walls.create(i * 32, j * 32, 'tiles', 246);
-        }
-      }
+  var self = this;
+  myLevel.world.iterate(function(item, y, x) {
+    if (item === 0) {
+      self.walls.create(x * 32, y * 32, 'tiles', 246);
     }
-  }
+  });
 
   this.player.sprite.bringToTop();
 };
