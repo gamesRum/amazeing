@@ -51,7 +51,10 @@ Being.prototype.damage = function(str) {
     }
 
     console.log('Damaged:', this.name, this.stats);
+    return true;
   }
+
+  return false;
 };
 
 Being.prototype.isAlive = function() {
