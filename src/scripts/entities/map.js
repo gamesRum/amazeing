@@ -1,6 +1,7 @@
 'use strict';
 
-var tiles = require('../tiles');
+var tiles = require('../tiles'),
+  utils = require('../utils');
 
 var Map = module.exports = function(size) {
   this.size = size || 64;
@@ -30,11 +31,9 @@ Map.prototype.generateEmpty = function(size) {
  */
 Map.prototype.iterate = function(perItem, perLine) {
   var size = this.size, i, j;
-
   if (!perItem) {
     return;
   }
-
   for (i = 0; i < size; i += 1) {
     (perLine || utils.fnK).call(this, this.map[i], i);
     for (j = 0; j < size; j += 1) {
@@ -43,13 +42,16 @@ Map.prototype.iterate = function(perItem, perLine) {
   }
 };
 
+/*
+ * @desc prints the map on console
+ */
 Map.prototype.print = function() {
-  var size = this.size, line = [], i, j;
-  for (i = 0; i < size; i += 1) {
-    for (j = 0; j < size; j += 1) {
-      line.push(this.map[i][j]);
-    }
+  var line = [];
+  this.iterate(function(item) {
+    line.push(item);
+  }, function() {
     console.log(line.join(''));
     line = [];
-  }
+  });
+  console.log(line.join(''));
 };

@@ -6,7 +6,7 @@ var Map = require('./map'),
 
 var Maze = module.exports = function(size, corridorSize) {
   Map.call(this, size);
-  this.corridorSize = corridorSize;
+  this.corridorSize = corridorSize || 1;
 };
 
 Maze.prototype = Object.create(Map.prototype);
