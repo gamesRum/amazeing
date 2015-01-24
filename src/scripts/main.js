@@ -13,7 +13,15 @@ game.state.add('menu', require('./states/menu'));
 game.state.add('play', require('./states/play'));
 game.state.start('boot');
 
-console.log('%c We are %c#gamesRum ', 'background: #222; color: #aabb55', 'background: #222; color: #aaffee');
+console.log('%c We are the %c#gamesRum ', 'background: #222; color: #aabb55', 'background: #222; color: #aaffee');
 var Room = require('./entities/room');
-var room = new Room();
+var room = new Room(15);
 room.generate('maze');
+
+var line = [];
+room.iterate(function(item) {
+  line.push(item);
+}, function() {
+  console.log(line.join(''));
+  line = [];
+});
