@@ -6,7 +6,7 @@ var Cave = require('./cave'),
 var Room = module.exports = function(type, size) {
   this.type = type || 'maze';
   this.size = size || 65;
-  this.state = {};
+  this.state = null;
   this.map = null;
 };
 
@@ -16,7 +16,6 @@ Room.prototype.init = function() {
   return this;
 };
 
-Room.prototype.saveState = function(mobs, items) {
-  this.state.mobs = mobs;
-  this.state.items = items;
+Room.prototype.saveState = function(state) { // is this needed ?
+  this.state = state;
 };
