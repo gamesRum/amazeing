@@ -8,7 +8,7 @@ Preloader.prototype.constructor = Preloader;
 
 Preloader.prototype.preload = function() {
   this.game.load.spritesheet('tiles', 'img/telles0808_rpg_maker_tileset.png', 32, 32, 16*27);
-  this.game.load.spritesheet('avatar', 'img/2p_russia_sprite_rpg_by_yumehoshichan-d675dxi.png', 32, 32, 4*4);
+  this.game.load.spritesheet('avatar', 'img/2p_russia_sprite_rpg_by_yumehoshichan-d675dxi.png', 32, 32, 4*5);
 };
 
 Preloader.prototype.create = function() {
