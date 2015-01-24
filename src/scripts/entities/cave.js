@@ -1,12 +1,12 @@
 'use strict';
 
 var PathFinder = require('./pathFinder'),
-  World = require('./world'),
+  Mapa = require('./mapa'),
   tiles = require('../tiles'),
   pathfinder = new PathFinder();
 
 var Cave = module.exports = function(size, seed, smoothness) {
-  World.call(this, size);
+  Mapa.call(this, size);
   this.seed = seed || Math.random();
   this.smoothness = smoothness || size / 10;
 
@@ -15,7 +15,7 @@ var Cave = module.exports = function(size, seed, smoothness) {
   }
 };
 
-Cave.prototype = Object.create(World.prototype);
+Cave.prototype = Object.create(Mapa.prototype);
 Cave.prototype.constructor = Cave;
 
 /*

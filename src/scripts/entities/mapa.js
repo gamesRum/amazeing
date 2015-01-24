@@ -3,7 +3,7 @@
 var tiles = require('../tiles'),
   utils = require('../utils');
 
-var World = module.exports = function(size) {
+var Mapa = module.exports = function(size) {
   this.size = size || 64;
 };
 
@@ -11,7 +11,7 @@ var World = module.exports = function(size) {
  * @desc this method should be overwritten
  * @return []
  */
-World.prototype.generate = function() {
+Mapa.prototype.generate = function() {
   throw 'World.prototype.generateEmpty should be overwritten on ' + this.constructor;
 };
 
@@ -19,7 +19,7 @@ World.prototype.generate = function() {
  * @desc this method should be overwritten
  * @return []
  */
-World.prototype.getPlayerSpawnPoint = function() {
+Mapa.prototype.getPlayerSpawnPoint = function() {
   throw 'World.prototype.generateEmpty should be overwritten on ' + this.constructor;
 };
 
@@ -28,7 +28,7 @@ World.prototype.getPlayerSpawnPoint = function() {
  * @param int size - size of map
  * @return []
  */
-World.prototype.generateEmpty = function(size) {
+Mapa.prototype.generateEmpty = function(size) {
   var map = [];
   size = size || this.size;
   for (var i = 0; i < size; i += 1) {
@@ -45,7 +45,7 @@ World.prototype.generateEmpty = function(size) {
  * @param function perItem - callback that receives current item, index-i, index-j
  * @param function perLine - callback that receives the complete row, index-i
  */
-World.prototype.iterate = function(perItem, perLine) {
+Mapa.prototype.iterate = function(perItem, perLine) {
   var size = this.size, i, j;
   if (!perItem) {
     return;
@@ -61,7 +61,7 @@ World.prototype.iterate = function(perItem, perLine) {
 /*
  * @desc prints the map on console
  */
-World.prototype.print = function() {
+Mapa.prototype.print = function() {
   var line = [];
   this.iterate(function(item) {
     line.push(item);
@@ -76,7 +76,7 @@ World.prototype.print = function() {
  * @desc get a random coordinates within the map avoiding borders
  * @return object - coordinates of random cell
  */
-World.prototype.getRandomCell = function() {
+Mapa.prototype.getRandomCell = function() {
   var row = utils.randomInt(this.size - 2, 1);
   while (row % 2 === 0) {
     row = utils.randomInt(this.size - 2, 1);
