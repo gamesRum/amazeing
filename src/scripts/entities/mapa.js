@@ -4,23 +4,24 @@ var tiles = require('../tiles'),
   utils = require('../utils');
 
 var Mapa = module.exports = function(size) {
+  if (this.constructor === Map) {
+    throw new Error('Creating instances of Mapa class is not allowed.');
+  }
   this.size = size || 64;
 };
 
 /*
  * @desc this method should be overwritten
- * @return []
  */
 Mapa.prototype.generate = function() {
-  throw 'World.prototype.generateEmpty should be overwritten on ' + this.constructor;
+  throw new Error('World.prototype.generateEmpty should be overwritten on ' + this.constructor);
 };
 
 /*
  * @desc this method should be overwritten
- * @return []
  */
 Mapa.prototype.getPlayerSpawnPoint = function() {
-  throw 'World.prototype.generateEmpty should be overwritten on ' + this.constructor;
+  throw new Error('World.prototype.getPlayerSpawnPoint should be overwritten on ' + this.constructor);
 };
 
 /*
