@@ -8,12 +8,14 @@ Play.prototype = Object.create(Phaser.State.prototype);
 Play.prototype.constructor = Play;
 
 var Room = require('../entities/room');
-var myLevel = new Room('maze');
-myLevel.init();
 
 Play.prototype.map = {
-  height: 11,
-  width: 11
+  level: null,
+  tile: {
+    height: 32,
+    width: 32
+  },
+  size: 11
 };
 
 Play.prototype.player = {
@@ -21,10 +23,12 @@ Play.prototype.player = {
   moving: false,
   animating: false,
   location: {
-    x: 0,
-    y: 0
+    x: 1,
+    y: 1
   },
-  timer: null
+  timer: null,
+  height: 32,
+  width: 32
 };
 
 Play.prototype.render = function() {
@@ -33,15 +37,19 @@ Play.prototype.render = function() {
 };
 
 Play.prototype.drawMaze = function() {
-  var map_width = (this.map.width+1)*32,
-      map_height = (this.map.height+1)*32;
+  this.map.level = new Room('maze', this.map.size);
+  this.map.level.init();
+
+  var map_width = (this.map.size+1) * this.map.tile.width,
+      map_height = (this.map.size+1) * this.map.tile.height;
 
   this.game.world.setBounds(0, 0, map_width, map_height);
 
   var self = this;
-  myLevel.world.iterate(function(item, y, x) {
+
+  this.map.level.world.iterate(function(item, y, x) {
     if (item === 0) {
-      self.walls.create(x * 32, y * 32, 'tiles', 246);
+      self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 246);
     }
   });
 
@@ -57,12 +65,12 @@ Play.prototype.create = function() {
   this.walls.enableBody = true;
   this.walls.physicsBodyType = Phaser.Physics.ARCADE;
 
-  this.player.sprite = this.game.add.sprite(32, 32, 'avatar');
-  this.game.physics.enable([this.player.sprite, this.walls], Phaser.Physics.ARCADE);
+  this.player.sprite = this.game.add.sprite(this.player.width, this.player.height, 'avatar');
+  this.game.physics.enable(this.player.sprite, Phaser.Physics.ARCADE);
   this.game.camera.follow(this.player.sprite);
   this.player.sprite.body.setSize(12, 16, 2, 0);
-  this.player.sprite.position.x = 0;
-  this.player.sprite.position.y = 0;
+  this.player.sprite.position.x = this.player.location.x * this.player.width;
+  this.player.sprite.position.y = this.player.location.y * this.player.height;
   this.player.sprite.bringToTop();
 
   this.player.sprite.animations.add('stand', [0], 1, false);
@@ -84,6 +92,10 @@ Play.prototype.stopMoving = function() {
   this.player.moving = false;
 };
 
+Play.prototype.collisionHandler = function(sprite, wall) {
+  console.log('Collision!', sprite, wall);
+};
+
 Play.prototype.movePlayer = function(left, top) {
   this.player.location.x += left;
   this.player.location.y += top;
@@ -97,24 +109,28 @@ Play.prototype.movePlayer = function(left, top) {
     this.player.location.y = 0;
   }
 
-  if(this.player.location.x > this.map.width) {
-    this.player.location.x = this.map.width;
+  if(this.player.location.x > this.map.size) {
+    this.player.location.x = this.map.size;
   }
 
-  if(this.player.location.y > this.map.height) {
-    this.player.location.y = this.map.height;
+  if(this.player.location.y > this.map.size) {
+    this.player.location.y = this.map.size;
   }
 
   var animation = this.game.add.tween(this.player.sprite).to(
     {
-      x: this.player.location.x * 32,
-      y: this.player.location.y * 32
+      x: this.player.location.x * this.map.tile.width,
+      y: this.player.location.y * this.map.tile.height
     },
     200, Phaser.Easing.Linear.None, true
   );
 
   animation.onStart.add(this.startMoving, this)
   animation.onComplete.addOnce(this.stopMoving, this);
+
+  if(this.game.physics.arcade.overlap(this.player.sprite, this.walls)) {
+    this.collisionHandler(this.player.sprite, this.walls);
+  }
 };
 
 Play.prototype.update = function() {
@@ -144,7 +160,5 @@ Play.prototype.update = function() {
       this.movePlayer(1, 0);
       this.player.sprite.animations.play('walk_right');
     }
-
-    this.game.physics.arcade.collide(this.player.sprite, this.walls);
   }
 };
