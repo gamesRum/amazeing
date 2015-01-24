@@ -13,7 +13,7 @@ var Mob = require('../entities/mob');
 
 Play.prototype.map = {
   level: null,
-  size: 31,
+  size: 19,
   tile: {
     height: 32,
     width: 32
