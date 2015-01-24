@@ -47,3 +47,7 @@ World.prototype.addNewRoom = function() {
   var newRoom = new Room('maze', 9).init();
   this.roomsArray.push(newRoom);
 };
+
+World.prototype.getPlayerSpawnPoint = function() {
+  return this.room.map.getPlayerSpawnPoint();
+};

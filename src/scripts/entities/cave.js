@@ -117,6 +117,11 @@ Cave.prototype.addDoors = function() {
     }
   }
 
+  this.enter = {
+    row: enter.row,
+    column: enter.column
+  };
+
   this.map[enter.row][enter.column] = tiles.enter;
   this.map[exit.row][exit.column] = tiles.exit;
 };

@@ -37,10 +37,12 @@ document.body.onkeydown = function(event) {
     console.log('<');
     console.log(world.goPreviousLevel());
     world.room.map.print();
+    console.log(world.getPlayerSpawnPoint());
   } else if (keycode === 39) {
     console.log('>');
     console.log(world.goNextLevel());
     world.room.map.print();
+    console.log(world.getPlayerSpawnPoint());
   } else {
     console.log('~');
   }

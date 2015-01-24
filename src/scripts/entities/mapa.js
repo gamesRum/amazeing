@@ -8,6 +8,7 @@ var Mapa = module.exports = function(size) {
     throw new Error('Creating instances of Mapa class is not allowed.');
   }
   this.size = size || 64;
+  this.enter = null;
 };
 
 /*
@@ -18,10 +19,11 @@ Mapa.prototype.generate = function() {
 };
 
 /*
- * @desc this method should be overwritten
+ * @desc get player spawn point
+ * @return object {row, column} - coordinates
  */
 Mapa.prototype.getPlayerSpawnPoint = function() {
-  throw new Error('World.prototype.getPlayerSpawnPoint should be overwritten on ' + this.constructor);
+  return this.enter;
 };
 
 /*

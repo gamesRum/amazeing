@@ -105,6 +105,11 @@ Maze.prototype.addDoors = function() {
   enter = this.getRandomCell();
   exit = this.getRandomCell();
 
+  this.enter = {
+    row: enter.row,
+    column: enter.column
+  };
+
   this.map[enter.row][enter.column] = tiles.enter;
   this.map[exit.row][exit.column] = tiles.exit;
 };

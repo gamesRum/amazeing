@@ -20,7 +20,3 @@ Room.prototype.saveState = function(mobs, items) {
   this.state.mobs = mobs;
   this.state.items = items;
 };
-
-Room.prototype.getPlayerSpawnPoint = function() {
-  return this.map.playerSpawnPoint();
-};
