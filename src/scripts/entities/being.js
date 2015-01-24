@@ -6,6 +6,8 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
     size: bagSize || 10
   };
 
+  this.name = 'Mob';
+
   this.animating = false;
 
   this.inventory= {
@@ -41,13 +43,22 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
 };
 
 Being.prototype.damage = function(str) {
-  this.stats.hp = this.stats.hp + this.stats.def - str;
+  if(this.stats.hp) {
+    this.stats.hp = this.stats.hp + this.stats.def - str;
 
-  if(this.stats.hp < 0) {
-    this.stats.hp = 0;
+    if(this.stats.hp < 0) {
+      this.stats.hp = 0;
+    }
+
+    console.log('Damaged:', this.name, this.stats);
+    return true;
   }
 
-  console.log('Ouch you can not move until somebody touch you!', str);
+  return false;
+};
+
+Being.prototype.isAlive = function() {
+  return this.stats.hp > 0;
 };
 
 Being.prototype.update = function() {
