@@ -6,6 +6,10 @@ var Cave = module.exports = function(size, seed, smoothness) {
   World.call(this, size);
   this.seed = seed || Math.random();
   this.smoothness = smoothness || size / 10;
+
+  if (this.smoothness > 10) {
+    this.smoothness = 10;
+  }
 };
 
 Cave.prototype = Object.create(World.prototype);
