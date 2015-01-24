@@ -9,6 +9,7 @@ Play.prototype.constructor = Play;
 
 var Room = require('../entities/room');
 var Player = require('../entities/player');
+var Mob = require('../entities/mob');
 
 Play.prototype.map = {
   level: null,
@@ -46,6 +47,7 @@ Play.prototype.render = function() {
 
 Play.prototype.createMobs = function() {
   this.mobs = this.game.add.group();
+  this.mobs.entities = [];
   this.mobs.enableBody = true;
   this.mobs.physicsBodyType = Phaser.Physics.ARCADE;
 
@@ -53,7 +55,9 @@ Play.prototype.createMobs = function() {
     for(var j = 0; j< this.map.size; j++) {
       if(this.map.walkable[i][j]) {
         if(Math.floor((Math.random() * 100) + 1) > 95) {
-          this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'tiles', 248);
+          var mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'tiles', 248);
+
+          this.mobs.entities.push(new Mob(i, j, (i*j)+i, i+j, {x: this.map.size, y: this.map.size}, mobSprite, this.map.walkable));
         }
       }
     }
@@ -90,6 +94,10 @@ Play.prototype.drawMaze = function() {
 };
 
 Play.prototype.create = function() {
+  this.timer = {
+    turn: true
+  };
+
   this.game.physics.startSystem(Phaser.Physics.ARCADE);
   this.game.stage.disableVisibilityChange = true;
   this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', 8);
@@ -102,7 +110,6 @@ Play.prototype.create = function() {
   this.game.physics.enable(this.player.sprite, Phaser.Physics.ARCADE);
   this.game.camera.follow(this.player.sprite);
   this.player.sprite.body.setSize(12, 16, 2, 0);
-  console.log(this.player);
   this.player.sprite.position.x = this.player.location.x * this.player.width;
   this.player.sprite.position.y = this.player.location.y * this.player.height;
   this.player.sprite.bringToTop();
@@ -149,12 +156,12 @@ Play.prototype.movePlayer = function(left, top, action) {
     this.player.location.y = 0;
   }
 
-  if(this.player.location.x > this.map.size) {
-    this.player.location.x = this.map.size;
+  if(this.player.location.x > this.map.size-1) {
+    this.player.location.x = this.map.size-1;
   }
 
-  if(this.player.location.y > this.map.size) {
-    this.player.location.y = this.map.size;
+  if(this.player.location.y > this.map.size-1) {
+    this.player.location.y = this.map.size-1;
   }
 
   if(!this.map.walkable[this.player.location.x][this.player.location.y]) {
@@ -180,8 +187,25 @@ Play.prototype.movePlayer = function(left, top, action) {
   }
 };
 
+Play.prototype.timerTick = function() {
+  for(var index in this.mobs.entities) {
+    var mob = this.mobs.entities[index];
+    mob.chooseNextMove();
+  }
+
+  this.timer.turn = true;
+};
+
 Play.prototype.update = function() {
   this.player.sprite.body.velocity.setTo(0, 0);
+
+  if(this.timer.turn) {
+    this.timer.turn = false;
+    var self = this;
+    setTimeout(function(){
+      self.timerTick()
+    }, 200);
+  }
 
   if(!this.player.moving) {
     this.game.input.update();
