@@ -35,7 +35,6 @@ Mob.prototype.chooseOrientation = function() {
 
 Mob.prototype.attack = function(entity) {
   this.player.sprite.animations.play('damage');
-  this.player.moving = !this.player.moving;
   entity.damage(this.stats.str);
 };
 
@@ -70,15 +69,19 @@ Mob.prototype.chooseNextMove = function() {
   switch(this.orientation) {
     case 0:
       this.location.y++;
+      this.sprite.animations.play('walk_down');
       break;
     case 1:
       this.location.y--;
+      this.sprite.animations.play('walk_up');
       break;
     case 2:
       this.location.x++;
+      this.sprite.animations.play('walk_right');
       break;
     default:
       this.location.x--;
+      this.sprite.animations.play('walk_left');
   }
 
   if(this.location.x < 0) {
