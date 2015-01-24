@@ -8,8 +8,8 @@ Play.prototype = Object.create(Phaser.State.prototype);
 Play.prototype.constructor = Play;
 
 Play.prototype.map = {
-  height: 31,
-  width: 31
+  height: 11,
+  width: 11
 };
 
 Play.prototype.player = {
@@ -23,8 +23,16 @@ Play.prototype.player = {
   timer: null
 };
 
+Play.prototype.render = function() {
+  this.game.time.advancedTiming = true;
+  this.game.debug.text(this.game.time.fps || '--', window.innerWidth-40, 14, "#ffffff");
+};
+
 Play.prototype.drawMaze = function() {
-  this.game.world.setBounds(0, 0, (this.map.width+1)*32, (this.map.height+1)*32);
+  var map_width = (this.map.width+1)*32,
+      map_height = (this.map.height+1)*32;
+
+  this.game.world.setBounds(0, 0, map_width, map_height);
 
   for (var i = 0; i <= this.map.width; i += 1) {
     for (var j = 0; j <= this.map.height; j += 1) {
@@ -37,11 +45,12 @@ Play.prototype.drawMaze = function() {
       }
     }
   }
+
+  this.player.sprite.bringToTop();
 };
 
 Play.prototype.create = function() {
   this.game.physics.startSystem(Phaser.Physics.ARCADE);
-  this.game.world.setBounds(0, 0, 64*64, 64*64);
   this.game.stage.disableVisibilityChange = true;
   this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', 8);
 
@@ -53,9 +62,9 @@ Play.prototype.create = function() {
   this.game.physics.enable([this.player.sprite, this.walls], Phaser.Physics.ARCADE);
   this.game.camera.follow(this.player.sprite);
   this.player.sprite.body.setSize(12, 16, 2, 0);
-  this.player.sprite.bringToTop();
   this.player.sprite.position.x = 0;
   this.player.sprite.position.y = 0;
+  this.player.sprite.bringToTop();
 
   this.player.sprite.animations.add('stand', [0], 1, false);
   this.player.sprite.animations.add('walk_left', [4,5,6,7], 10, true);
