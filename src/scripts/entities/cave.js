@@ -1,6 +1,9 @@
 'use strict';
 
-var World = require('./world');
+var PathFinder = require('./pathFinder'),
+  World = require('./world'),
+  tiles = require('../tiles'),
+  pathfinder = new PathFinder();
 
 var Cave = module.exports = function(size, seed, smoothness) {
   World.call(this, size);
@@ -30,6 +33,7 @@ Cave.prototype.generate = function() {
     this.polish(this.smoothness);
   }
 
+  this.addDoors();
   return true;
 };
 
@@ -95,4 +99,24 @@ Cave.prototype.seededRandom = function(max, min) {
   this.seed = (this.seed * 9301 + 49297) % 233280;
   var rnd = this.seed / 233280;
   return min + rnd * (max - min);
+};
+
+/*
+ * @desc insert into map one enter and one exit
+ */
+Cave.prototype.addDoors = function() {
+  var areLinked = false,
+    enter = {},
+    exit = {};
+
+  while(!areLinked) {
+    enter = this.getRandomCell();
+    exit = this.getRandomCell();
+    if (pathfinder.findPath(this.map, [enter.row, enter.column], [exit.row,exit.column]).length > 0) {
+      areLinked = true;
+    }
+  }
+
+  this.map[enter.row][enter.column] = tiles.enter;
+  this.map[exit.row][exit.column] = tiles.exit;
 };

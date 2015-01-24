@@ -12,7 +12,15 @@ var World = module.exports = function(size) {
  * @return []
  */
 World.prototype.generate = function() {
-  throw 'World.prototype.generateEmpty should be overwritten';
+  throw 'World.prototype.generateEmpty should be overwritten on ' + this.constructor;
+};
+
+/*
+ * @desc this method should be overwritten
+ * @return []
+ */
+World.prototype.getPlayerSpawnPoint = function() {
+  throw 'World.prototype.generateEmpty should be overwritten on ' + this.constructor;
 };
 
 /*
@@ -64,10 +72,21 @@ World.prototype.print = function() {
   console.log(line.join(''));
 };
 
-World.prototype.getPlayerSpawnPoint = function() {
-  console.warn('playerSpawnPoint is not ready yet!');
+/*
+ * @desc get a random coordinates within the map avoiding borders
+ * @return object - coordinates of random cell
+ */
+World.prototype.getRandomCell = function() {
+  var row = utils.randomInt(this.size - 2, 1);
+  while (row % 2 === 0) {
+    row = utils.randomInt(this.size - 2, 1);
+  }
+  var column = utils.randomInt(this.size - 2, 1);
+  while (column % 2 === 0) {
+    column = utils.randomInt(this.size - 2, 1);
+  }
   return {
-    x: 1,
-    y: 1
+    row: row,
+    column: column
   };
 };

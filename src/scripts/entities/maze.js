@@ -19,31 +19,14 @@ Maze.prototype.constructor = Maze;
 Maze.prototype.generate = function() {
   this.map = this.generateEmpty();
 
-  var startPoint = this.getStartPoint();
+  var startPoint = this.getRandomCell();
   this.map[startPoint.row][startPoint.column] = tiles.walkable;
 
   this.generateOneStep(startPoint.row, startPoint.column);
   // Growth code goes here...
-  return true;
-};
 
-/*
- * @desc get a starting point within the map avoiding borders
- * @return object - coordinates of starting point
- */
-Maze.prototype.getStartPoint = function() {
-  var row = utils.randomInt(this.size - 1, 1);
-  while (row % 2 === 0) {
-    row = utils.randomInt(this.size - 1, 1);
-  }
-  var column = utils.randomInt(this.size - 1, 1);
-  while (column % 2 === 0) {
-    column = utils.randomInt(this.size - 1, 1);
-  }
-  return {
-    row: row,
-    column: column
-  };
+  this.addDoors();
+  return true;
 };
 
 /*
@@ -111,4 +94,17 @@ Maze.prototype.getRandomDirections = function() {
     continue;
   }
   return seq;
+};
+
+/*
+ * @desc insert into map one enter and one exit
+ */
+Maze.prototype.addDoors = function() {
+  var enter, exit;
+
+  enter = this.getRandomCell();
+  exit = this.getRandomCell();
+
+  this.map[enter.row][enter.column] = tiles.enter;
+  this.map[exit.row][exit.column] = tiles.exit;
 };
