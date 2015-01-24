@@ -6,6 +6,8 @@ var Mob = module.exports = function(id, game, player, x, y, money, level, bounds
   Being.call(this);
   this.stats.money = money;
   this.stats.level = level;
+  this.stats.maxHP = level;
+  this.stats.hp = level;
   this.bounds = bounds;
   this.sprite = sprite;
   this.location.x = x;
@@ -16,27 +18,28 @@ var Mob = module.exports = function(id, game, player, x, y, money, level, bounds
   this.entities = entities;
   this.id = id;
   this.player = player;
+  this.name = 'Mob_'+id;
   this.chooseOrientation();
 };
 
 Mob.prototype = Object.create(Being.prototype);
 Mob.prototype.constructor = Mob;
 
-Being.prototype.update = function() {
+Mob.prototype.update = function() {
   Being.call(this);
 };
 
-Being.prototype.chooseOrientation = function() {
+Mob.prototype.chooseOrientation = function() {
   this.orientation = Math.floor(Math.random() * 4);
 };
 
-Being.prototype.attack = function(entity) {
+Mob.prototype.attack = function(entity) {
   this.player.sprite.animations.play('attack');
   this.player.moving = !this.player.moving;
   entity.damage(this.stats.str);
 };
 
-Being.prototype.validCell = function(x, y) {
+Mob.prototype.validCell = function(x, y) {
   if(this.player.location.x === x && this.player.location.y === y) {
     this.attack(this.player);
     return false;
@@ -58,7 +61,7 @@ Being.prototype.validCell = function(x, y) {
   return true;
 };
 
-Being.prototype.chooseNextMove = function() {
+Mob.prototype.chooseNextMove = function() {
   var locationBackup = {
     x: this.location.x,
     y: this.location.y
@@ -102,6 +105,8 @@ Being.prototype.chooseNextMove = function() {
       },
       200, Phaser.Easing.linear, true
     );
+
+    this.sprite.bringToTop();
   } else {
     this.location = locationBackup;
     this.chooseOrientation();
