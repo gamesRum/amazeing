@@ -12,5 +12,5 @@ Preloader.prototype.preload = function() {
 };
 
 Preloader.prototype.create = function() {
-  this.state.start('menu');
+  this.state.start('play');
 };
