@@ -75,7 +75,6 @@ Play.prototype.createMobs = function() {
               o = mobBaseLevel * 3,
               mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
 
-          console.log('Level: ', mobBaseLevel);
           mobSprite.animations.add('walk_left', [12 + o, 13 + o, 14 + o], 10, true);
           mobSprite.animations.add('walk_right', [24 + o, 25 + o, 26 + o], 10, true);
           mobSprite.animations.add('walk_up', [36 + o, 37 + o, 38 + o], 10, true);
