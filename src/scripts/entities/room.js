@@ -3,9 +3,10 @@
 var Cave = require('./cave'),
   Maze = require('./maze');
 
-var Room = module.exports = function(type, size) {
+var Room = module.exports = function(type, size, biome) {
   this.type = type || 'maze';
   this.size = size || 65;
+  this.biome = biome || 'forest';
   this.state = null;
   this.map = null;
 };
