@@ -26,16 +26,28 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
   this.moving = false;
   this.sprite = null;
   this.stats =  {
-    level: 0,
-    maxHP: maxHP || 10,
-    maxSP: maxSP || 10,
+    level: 1,
+    maxHP: maxHP || 100,
+    maxSP: maxSP || 100,
     money: money || 0,
-    hp: maxHP || 10,
-    sp: maxSP || 10
+    hp: maxHP || 100,
+    sp: maxSP || 100,
+    str: 2,
+    def: 1
   };
 
   this.height= 32;
   this.width= 32;
+};
+
+Being.prototype.damage = function(str) {
+  this.stats.hp = this.stats.hp + this.stats.def - str;
+
+  if(this.stats.hp < 0) {
+    this.stats.hp = 0;
+  }
+
+  console.log('Ouch you can not move until somebody touch you!', str);
 };
 
 Being.prototype.update = function() {
