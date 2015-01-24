@@ -34,7 +34,7 @@ Mob.prototype.chooseOrientation = function() {
 };
 
 Mob.prototype.attack = function(entity) {
-  this.player.sprite.animations.play('attack');
+  this.player.sprite.animations.play('damage');
   this.player.moving = !this.player.moving;
   entity.damage(this.stats.str);
 };

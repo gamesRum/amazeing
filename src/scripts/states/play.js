@@ -157,7 +157,8 @@ Play.prototype.create = function() {
   this.player.sprite.animations.add('walk_right', [8,9,10,11], 10, true);
   this.player.sprite.animations.add('walk_up', [12,13,14,15], 10, true);
   this.player.sprite.animations.add('walk_down', [0,1,2,3], 10, true);
-  this.player.sprite.animations.add('attack', [16,17,18,19], 10, true);
+  this.player.sprite.animations.add('damage', [16,17,18,19], 10, true);
+  this.player.sprite.animations.add('attack', [20,21,22,23], 10, true);
 
   this.drawMaze();
 
