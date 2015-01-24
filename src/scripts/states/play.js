@@ -36,6 +36,8 @@ Play.prototype.updateStats = function() {
   addText('Level', this.player.stats.level);
   addText('HP', this.player.stats.hp);
   addText('SP', this.player.stats.sp);
+  addText('STR', this.player.stats.str);
+  addText('DEF', this.player.stats.def);
   addText('$', this.player.stats.money);
 };
 
@@ -51,13 +53,15 @@ Play.prototype.createMobs = function() {
   this.mobs.enableBody = true;
   this.mobs.physicsBodyType = Phaser.Physics.ARCADE;
 
+  var mobID = 0;
+
   for(var i = 0; i< this.map.size; i++) {
     for(var j = 0; j< this.map.size; j++) {
       if(this.map.walkable[i][j]) {
         if(Math.floor((Math.random() * 100) + 1) > 95) {
           var mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'tiles', 248);
 
-          this.mobs.entities.push(new Mob(i, j, (i*j)+i, i+j, {x: this.map.size, y: this.map.size}, mobSprite, this.map.walkable));
+          this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i*j)+i, i+j, {x: this.map.size, y: this.map.size}, mobSprite, this.mobs.entities, this.map.walkable));
         }
       }
     }
