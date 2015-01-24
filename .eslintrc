@@ -1,0 +1,120 @@
+{
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    // Possible Errors
+//    "no-console": 1, // We need console lol
+    "no-empty": 1,
+    "no-extra-parens": 1,
+    "no-extra-semi": 1,
+    // Best Practices
+    "block-scoped-var": 1,
+    "curly": [
+      2,
+      "all"
+    ],
+    "dot-notation": 1,
+    "eqeqeq": [
+      2,
+      "smart"
+    ],
+    "guard-for-in": 2,
+    "no-alert": 2,
+    "no-caller": 2,
+    "no-eval": 2,
+    "no-floating-decimal": 2,
+    "no-implied-eval": 2,
+    "no-lone-blocks": 1,
+    "no-loop-func": 2,
+    "no-new-func": 2,
+    "no-new-wrappers": 2,
+    "no-redeclare": 1,
+    "no-unused-expressions": 2,
+    "no-warning-comments": 1,
+    "wrap-iife": 2,
+    "yoda": 2,
+    // Strict Mode
+    "no-extra-strict": 2,
+    "strict": 2,
+    // Variables
+    "no-shadow": 1,
+    "no-shadow-restricted-names": 2,
+    "no-undef": 2,
+    "no-undefined": 2,
+    "no-undef-init": 2,
+    "no-unused-vars": [
+      2,
+      {
+        "vars": "all",
+        "args": "all"
+      }
+    ],
+    "no-use-before-define": [
+      2,
+      "nofunc"
+    ],
+    // Stylistic Issues
+    "brace-style": [
+      2,
+      "1tbs"
+    ],
+    "camelcase": 2,
+    "eol-last": 2,
+    "func-style": [
+      2,
+      "expression"
+    ],
+    "new-cap": 2,
+    "new-parens": 2,
+    "no-nested-ternary": 2,
+    "no-array-constructor": 2,
+    "no-lonely-if": 2,
+    "no-new-object": 2,
+    "no-spaced-func": 2,
+    "no-space-before-semi": 2,
+    "no-trailing-spaces": 2,
+    "no-wrap-func": 2,
+    "no-mixed-spaces-and-tabs": [
+      2,
+      true
+    ],
+    "quotes": [
+      2,
+      "single",
+      "avoid-escape"
+    ],
+    "semi": [
+      2,
+      "always"
+    ],
+//    "sort-vars": 1, // stop bother me plz!
+    "space-after-keywords": 2,
+    "space-in-brackets": [
+      2,
+      "never"
+    ],
+    "space-infix-ops": 2,
+    "space-return-throw-case": 2,
+//    "space-unary-word-ops": 2, // This guy is causing problems
+    "max-nested-callbacks": [
+      2,
+      2
+    ],
+    // Legacy
+    "max-depth": [
+      1,
+      2
+    ],
+    "max-len": [
+      1,
+      120,
+      4
+    ],
+    "no-plusplus": 1
+  },
+  "globals": {
+    "Phaser": false
+  }
+}

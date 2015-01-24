@@ -1,0 +1,14 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        title= name
+        link(rel='stylesheet', href='css/style.css')
+    body
+        div(id='content')
+
+        script(src='js/phaser.min.js')
+        unless debug
+            script(src='js/game.min.js')
+        else
+            script(src='js/game.js')
