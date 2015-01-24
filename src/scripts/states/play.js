@@ -21,10 +21,12 @@ Play.prototype.map = {
   walkable: null,
   warps: {
     start: {
+      id: 'start',
       x: 0,
       y: 0
     },
     end: {
+      id: 'end',
       x: 0,
       y: 0
     }
@@ -107,15 +109,13 @@ Play.prototype.drawMaze = function() {
         break;
       case 2:
         self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 403);
-        self.map.warps.start = {
-          x: x, y: y
-        };
+        self.map.warps.start.x = x;
+        self.map.warps.start.y = y;
         break;
       case 3:
         self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 420);
-        self.map.warps.end = {
-          x: x, y: y
-        };
+        self.map.warps.end.x = x;
+        self.map.warps.end.y = y;
         break;
       default:
         self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 246);
@@ -198,6 +198,17 @@ Play.prototype.validCell = function(x, y) {
   return true;
 };
 
+Play.prototype.checkWarps = function(x, y) {
+  for (var index in this.map.warps) {
+    var warp = this.map.warps[index];
+
+    if(warp.x === x && warp.y === y) {
+      console.log('Warp reached!', warp.id);
+      // TODO: we should load a new map, depending on warp.id!!!
+    }
+  }
+};
+
 Play.prototype.movePlayer = function(left, top, action) {
   var locationBackup = {
     x: this.player.location.x,
@@ -228,6 +239,8 @@ Play.prototype.movePlayer = function(left, top, action) {
     this.player.moving = false;
     this.player.location = locationBackup;
   } else {
+    this.checkWarps(this.player.location.x, this.player.location.y);
+
     var animation = this.game.add.tween(this.player.sprite).to(
       {
         x: this.player.location.x * this.map.tile.width,
