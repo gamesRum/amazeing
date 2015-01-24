@@ -10,12 +10,13 @@ Play.prototype.constructor = Play;
 var Room = require('../entities/room');
 
 Play.prototype.map = {
+  walkable: null,
   level: null,
   tile: {
     height: 32,
     width: 32
   },
-  size: 11
+  size: 15
 };
 
 Play.prototype.player = {
@@ -37,19 +38,26 @@ Play.prototype.render = function() {
 };
 
 Play.prototype.drawMaze = function() {
-  this.map.level = new Room('maze', this.map.size);
-  this.map.level.init();
-
-  var map_width = (this.map.size+1) * this.map.tile.width,
+  var self = this,
+      map_width = (this.map.size+1) * this.map.tile.width,
       map_height = (this.map.size+1) * this.map.tile.height;
 
   this.game.world.setBounds(0, 0, map_width, map_height);
 
-  var self = this;
+  this.map.level = new Room('maze', this.map.size);
+  this.map.level.init();
+
+  this.map.walkable = new Array(this.map.size);
+  for(var i =0; i< this.map.size; i++) {
+    this.map.walkable[i] = new Array(this.map.size);
+  }
 
   this.map.level.world.iterate(function(item, y, x) {
     if (item === 0) {
       self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 246);
+      self.map.walkable[x][y] = false;
+    } else {
+      self.map.walkable[x][y] = true;
     }
   });
 
@@ -92,11 +100,12 @@ Play.prototype.stopMoving = function() {
   this.player.moving = false;
 };
 
-Play.prototype.collisionHandler = function(sprite, wall) {
-  console.log('Collision!', sprite, wall);
-};
-
 Play.prototype.movePlayer = function(left, top) {
+  var locationBackup = {
+    x: this.player.location.x,
+    y: this.player.location.y
+  }
+
   this.player.location.x += left;
   this.player.location.y += top;
   this.player.moving = true;
@@ -117,24 +126,24 @@ Play.prototype.movePlayer = function(left, top) {
     this.player.location.y = this.map.size;
   }
 
-  var animation = this.game.add.tween(this.player.sprite).to(
-    {
-      x: this.player.location.x * this.map.tile.width,
-      y: this.player.location.y * this.map.tile.height
-    },
-    200, Phaser.Easing.Linear.None, true
-  );
+  if(!this.map.walkable[this.player.location.x][this.player.location.y]) {
+    this.player.moving = false;
+    this.player.location = locationBackup;
+  } else {
+    var animation = this.game.add.tween(this.player.sprite).to(
+      {
+        x: this.player.location.x * this.map.tile.width,
+        y: this.player.location.y * this.map.tile.height
+      },
+      200, Phaser.Easing.Linear.None, true
+    );
 
-  animation.onStart.add(this.startMoving, this)
-  animation.onComplete.addOnce(this.stopMoving, this);
-
-  if(this.game.physics.arcade.overlap(this.player.sprite, this.walls)) {
-    this.collisionHandler(this.player.sprite, this.walls);
+    animation.onStart.add(this.startMoving, this)
+    animation.onComplete.addOnce(this.stopMoving, this);
   }
 };
 
 Play.prototype.update = function() {
-  this.game.physics.arcade.collide(this.player.sprite, this.walls);
   this.player.sprite.body.velocity.setTo(0, 0);
 
   if(!this.player.moving) {
