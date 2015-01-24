@@ -33,7 +33,7 @@ Play.prototype.map = {
   }
 };
 
-Play.prototype.player = new Player(100, 'joan', 'male');
+Play.prototype.player = new Player(20, 'joan', 'male');
 
 Play.prototype.updateStats = function() {
   var statusBar = document.getElementById("status");
@@ -289,7 +289,12 @@ Play.prototype.update = function() {
     }, 200);
   }
 
-  if(!this.player.moving) {
+  if(!this.player.isAlive()) {
+    alert('You are dead!');
+    window.location.reload();
+  }
+
+  if(!this.player.moving && this.player.isAlive()) {
     this.game.input.update();
 
     if(this.cursors.down.isDown) {

@@ -4,11 +4,9 @@ var Being = require('./being');
 
 var Player = module.exports = function(hp, name, genre) {
   Being.call(this);
-  this.hp = hp;
+  this.stats.hp = hp;
   this.name = name;
   this.genre = genre;
-
-  console.log(hp, name, genre);
 };
 
 Player.prototype = Object.create(Being.prototype);
