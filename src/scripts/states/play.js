@@ -187,8 +187,13 @@ Play.prototype.validCell = function(x, y) {
     if (mob.location.x === x && mob.location.y === y) {
 
       if(this.keys.spaceBar.isDown) {
-        console.log('attack!');
-        this.player.attack(mob);
+        if(this.player.attack(mob)) {
+          var animation = this.game.add.tween(mob.sprite);
+
+          animation.to({alpha: 0.5}, 120, Phaser.Easing.linear, true, 0, 1, false);
+          animation.to({alpha: 1}, 120, Phaser.Easing.linear, true, 0, 1, false);
+          animation.start();
+        }
       }
 
       return false;
@@ -290,7 +295,7 @@ Play.prototype.update = function() {
   }
 
   if(!this.player.isAlive()) {
-    alert('You are dead!');
+    console.log('You are dead!');
     window.location.reload();
   }
 
