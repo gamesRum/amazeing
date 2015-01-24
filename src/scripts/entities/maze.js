@@ -1,37 +1,39 @@
 'use strict';
 
-var utils = require('../utils');
+var Map = require('./map'),
+  tiles = require('../tiles'),
+  utils = require('../utils');
 
-var walkable = 1,
-  nonWalkable = 0;
+var Maze = module.exports = function(size, corridorSize) {
+  Map.call(this, size);
+  this.corridorSize = corridorSize;
+};
 
-module.exports = {
-  generateMaze: function(size, corridorSize) {
-    /* Generate blank map */
-    var maze = [];
-    for (var i = 0; i < size; i += 1) {
-      maze[i] = [];
-      for (var j = 0; j < size; j += 1) {
-        maze[i][j] = nonWalkable;
-      }
-    }
+Maze.prototype = Object.create(Map.prototype);
+Maze.prototype.constructor = Maze;
 
-    /* First point where our algorithm will start */
-    var row = utils.nextInt(size);
-    while (row % 2 === 0) {
-      row = utils.nextInt(size);
-    }
-    var column = utils.nextInt(size);
-    while (column % 2 === 0) {
-      column = utils.nextInt(size);
-    }
-    maze[row][column] = 1;
+/*
+ * @desc generates an maze type map
+ * @return bool - success or failure
+ */
+Maze.prototype.generate = function() {
+  this.map = this.generateEmpty();
 
-    /* Start the magic, baby B-) */
-    generateWorld(row, column, maze, size, size, 2);
-    //maze = growIt(maze, corridorSize);
-    return maze;
+  /* First point where our algorithm will start */
+  var row = utils.randomInt(this.size - 1, 1);
+  while (row % 2 === 0) {
+    row = utils.randomInt(this.size - 1, 1);
   }
+  var column = utils.randomInt(this.size - 1, 1);
+  while (column % 2 === 0) {
+    column = utils.randomInt(this.size - 1, 1);
+  }
+  this.map[row][column] = tiles.walkable;
+
+  /* Start the magic, baby B-) */
+  generateWorld(row, column, this.map, this.size);
+  // add grow it here...
+  return true;
 };
 
 function generateWorld(row, col, maze, size) {
@@ -42,9 +44,9 @@ function generateWorld(row, col, maze, size) {
         if (row - 2 < 0) {
           continue;
         }
-        if (maze[row - 2][col] !== 1) {
-          maze[row - 2][col] = 1;
-          maze[row - 1][col] = 1;
+        if (maze[row - 2][col] !== tiles.walkable) {
+          maze[row - 2][col] = tiles.walkable;
+          maze[row - 1][col] = tiles.walkable;
           generateWorld(row - 2, col, maze, size);
         }
         break;
@@ -52,9 +54,9 @@ function generateWorld(row, col, maze, size) {
         if (col + 2 > size - 1) {
           continue;
         }
-        if (maze[row][col + 2] !== 1) {
-          maze[row][col + 2] = 1;
-          maze[row][col + 1] = 1;
+        if (maze[row][col + 2] !== tiles.walkable) {
+          maze[row][col + 2] = tiles.walkable;
+          maze[row][col + 1] = tiles.walkable;
           generateWorld(row, col + 2, maze, size);
         }
         break;
@@ -62,9 +64,9 @@ function generateWorld(row, col, maze, size) {
         if (row + 2 > size - 1) {
           continue;
         }
-        if (maze[row + 2][col] !== 1) {
-          maze[row + 2][col] = 1;
-          maze[row + 1][col] = 1;
+        if (maze[row + 2][col] !== tiles.walkable) {
+          maze[row + 2][col] = tiles.walkable;
+          maze[row + 1][col] = tiles.walkable;
           generateWorld(row + 2, col, maze, size);
         }
         break;
@@ -72,9 +74,9 @@ function generateWorld(row, col, maze, size) {
         if (col - 2 <= 0) {
           continue;
         }
-        if (maze[row][col - 2] !== 1) {
-          maze[row][col - 2] = 1;
-          maze[row][col - 1] = 1;
+        if (maze[row][col - 2] !== tiles.walkable) {
+          maze[row][col - 2] = tiles.walkable;
+          maze[row][col - 1] = tiles.walkable;
           generateWorld(row, col - 2, maze, size);
         }
         break;
