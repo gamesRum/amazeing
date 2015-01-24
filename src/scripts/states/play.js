@@ -13,12 +13,22 @@ var Mob = require('../entities/mob');
 
 Play.prototype.map = {
   level: null,
-  size: 15,
+  size: 31,
   tile: {
     height: 32,
     width: 32
   },
-  walkable: null
+  walkable: null,
+  warps: {
+    start: {
+      x: 0,
+      y: 0
+    },
+    end: {
+      x: 0,
+      y: 0
+    }
+  }
 };
 
 Play.prototype.player = new Player(100, 'joan', 'male');
@@ -83,17 +93,41 @@ Play.prototype.drawMaze = function() {
     this.map.walkable[i] = new Array(this.map.size);
   }
 
-  this.map.level.world.iterate(function(item, y, x) {
-    if (item === 0) {
-      self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 246);
-      self.map.walkable[x][y] = false;
-    } else {
-      self.map.walkable[x][y] = true;
+  this.map.level.world.iterate(function(type, y, x) {
+    self.map.walkable[x][y] = true;
+
+    switch(type) {
+      case 1:
+        var textureModifier = Math.floor(Math.random() * 3) + 1;
+
+        if(((Math.random() * 100) + 1) > 95){
+          self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 223+textureModifier);
+        }
+
+        break;
+      case 2:
+        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 403);
+        self.map.warps.start = {
+          x: x, y: y
+        };
+        break;
+      case 3:
+        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 420);
+        self.map.warps.end = {
+          x: x, y: y
+        };
+        break;
+      default:
+        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 246);
+        self.map.walkable[x][y] = false;
     }
   });
 
   this.createMobs();
-
+  this.player.sprite.position.x = self.map.warps.start.x * self.map.tile.width;
+  this.player.sprite.position.y = self.map.warps.start.y * self.map.tile.height;
+  this.player.location.x = self.map.warps.start.x;
+  this.player.location.y = self.map.warps.start.y;
   this.player.sprite.bringToTop();
 };
 
@@ -142,6 +176,28 @@ Play.prototype.stopMoving = function() {
   this.player.moving = false;
 };
 
+Play.prototype.validCell = function(x, y) {
+  if(!this.map.walkable[x][y]) {
+    return false;
+  }
+
+  for (var index in this.mobs.entities) {
+    var mob = this.mobs.entities[index];
+
+    if (mob.location.x === x && mob.location.y === y) {
+
+      if(this.keys.spaceBar.isDown) {
+        console.log('attack!');
+        this.player.attack(mob);
+      }
+
+      return false;
+    }
+  }
+
+  return true;
+};
+
 Play.prototype.movePlayer = function(left, top, action) {
   var locationBackup = {
     x: this.player.location.x,
@@ -168,7 +224,7 @@ Play.prototype.movePlayer = function(left, top, action) {
     this.player.location.y = this.map.size-1;
   }
 
-  if(!this.map.walkable[this.player.location.x][this.player.location.y]) {
+  if(!this.validCell(this.player.location.x, this.player.location.y)) {
     this.player.moving = false;
     this.player.location = locationBackup;
   } else {
@@ -186,6 +242,7 @@ Play.prototype.movePlayer = function(left, top, action) {
     switch(action) {
       case 'attack':
         console.log('attack!');
+        // trigger some magic!
         break;
     }
   }
@@ -194,7 +251,15 @@ Play.prototype.movePlayer = function(left, top, action) {
 Play.prototype.timerTick = function() {
   for(var index in this.mobs.entities) {
     var mob = this.mobs.entities[index];
-    mob.chooseNextMove();
+
+    if(mob.isAlive()) {
+      mob.chooseNextMove();
+    } else {
+      var textureModifier = Math.floor(Math.random() * 2) + 1;
+      this.mobs.create(mob.location.x * this.map.tile.width, mob.location.y * this.map.tile.width, 'tiles', 240 + textureModifier);
+      this.mobs.entities.splice(index, 1);
+      mob.sprite.parent.remove(mob.sprite);
+    }
   }
 
   this.timer.turn = true;
