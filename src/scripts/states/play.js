@@ -44,6 +44,22 @@ Play.prototype.render = function() {
   this.updateStats();
 };
 
+Play.prototype.createMobs = function() {
+  this.mobs = this.game.add.group();
+  this.mobs.enableBody = true;
+  this.mobs.physicsBodyType = Phaser.Physics.ARCADE;
+
+  for(var i = 0; i< this.map.size; i++) {
+    for(var j = 0; j< this.map.size; j++) {
+      if(this.map.walkable[i][j]) {
+        if(Math.floor((Math.random() * 100) + 1) > 95) {
+          this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'tiles', 248);
+        }
+      }
+    }
+  }
+};
+
 Play.prototype.drawMaze = function() {
   var self = this,
       map_width = (this.map.size+1) * this.map.tile.width,
@@ -55,7 +71,7 @@ Play.prototype.drawMaze = function() {
   this.map.level.init();
 
   this.map.walkable = new Array(this.map.size);
-  for(var i =0; i< this.map.size; i++) {
+  for(var i = 0; i< this.map.size; i++) {
     this.map.walkable[i] = new Array(this.map.size);
   }
 
@@ -67,6 +83,8 @@ Play.prototype.drawMaze = function() {
       self.map.walkable[x][y] = true;
     }
   });
+
+  this.createMobs();
 
   this.player.sprite.bringToTop();
 };
