@@ -27,7 +27,6 @@ Play.prototype.player = {
     x: 1,
     y: 1
   },
-  timer: null,
   height: 32,
   width: 32
 };
@@ -104,7 +103,7 @@ Play.prototype.movePlayer = function(left, top) {
   var locationBackup = {
     x: this.player.location.x,
     y: this.player.location.y
-  }
+  };
 
   this.player.location.x += left;
   this.player.location.y += top;
@@ -135,7 +134,7 @@ Play.prototype.movePlayer = function(left, top) {
         x: this.player.location.x * this.map.tile.width,
         y: this.player.location.y * this.map.tile.height
       },
-      200, Phaser.Easing.Linear.None, true
+      200, Phaser.Easing.linear, true
     );
 
     animation.onStart.add(this.startMoving, this)
@@ -148,26 +147,21 @@ Play.prototype.update = function() {
 
   if(!this.player.moving) {
     this.game.input.update();
-    this.player.sprite.animations.play('stand');
 
     if(this.cursors.down.isDown) {
       this.movePlayer(0,1);
       this.player.sprite.animations.play('walk_down');
-    }
-
-    if(this.cursors.up.isDown) {
+    } else if(this.cursors.up.isDown) {
       this.movePlayer(0,-1);
       this.player.sprite.animations.play('walk_up');
-    }
-
-    if(this.cursors.left.isDown) {
+    } else if(this.cursors.left.isDown) {
       this.movePlayer(-1, 0);
       this.player.sprite.animations.play('walk_left');
-    }
-
-    if(this.cursors.right.isDown) {
+    } else if(this.cursors.right.isDown) {
       this.movePlayer(1, 0);
       this.player.sprite.animations.play('walk_right');
+    } else {
+      this.player.sprite.animations.play('stand');
     }
   }
 };
