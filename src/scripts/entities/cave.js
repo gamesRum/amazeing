@@ -1,14 +1,14 @@
 'use strict';
 
-var Map = require('./map');
+var World = require('./world');
 
 var Cave = module.exports = function(size, seed, smoothness) {
-  Map.call(this, size);
+  World.call(this, size);
   this.seed = seed || Math.random();
   this.smoothness = smoothness || size / 10;
 };
 
-Cave.prototype = Object.create(Map.prototype);
+Cave.prototype = Object.create(World.prototype);
 Cave.prototype.constructor = Cave;
 
 /*

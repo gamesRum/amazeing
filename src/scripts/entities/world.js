@@ -3,7 +3,7 @@
 var tiles = require('../tiles'),
   utils = require('../utils');
 
-var Map = module.exports = function(size) {
+var World = module.exports = function(size) {
   this.size = size || 64;
 };
 
@@ -12,7 +12,7 @@ var Map = module.exports = function(size) {
  * @param int size - size of map
  * @return []
  */
-Map.prototype.generateEmpty = function(size) {
+World.prototype.generateEmpty = function(size) {
   var map = [];
   size = size || this.size;
   for (var i = 0; i < size; i += 1) {
@@ -29,7 +29,7 @@ Map.prototype.generateEmpty = function(size) {
  * @param function perItem - callback that receives current item, index-i, index-j
  * @param function perLine - callback that receives the complete row, index-i
  */
-Map.prototype.iterate = function(perItem, perLine) {
+World.prototype.iterate = function(perItem, perLine) {
   var size = this.size, i, j;
   if (!perItem) {
     return;
@@ -45,7 +45,7 @@ Map.prototype.iterate = function(perItem, perLine) {
 /*
  * @desc prints the map on console
  */
-Map.prototype.print = function() {
+World.prototype.print = function() {
   var line = [];
   this.iterate(function(item) {
     line.push(item);

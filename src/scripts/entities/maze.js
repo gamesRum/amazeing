@@ -1,15 +1,15 @@
 'use strict';
 
-var Map = require('./map'),
+var World = require('./world'),
   tiles = require('../tiles'),
   utils = require('../utils');
 
 var Maze = module.exports = function(size, corridorSize) {
-  Map.call(this, size);
+  World.call(this, size);
   this.corridorSize = corridorSize || 1;
 };
 
-Maze.prototype = Object.create(Map.prototype);
+Maze.prototype = Object.create(World.prototype);
 Maze.prototype.constructor = Maze;
 
 /*
