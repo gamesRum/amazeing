@@ -71,9 +71,19 @@ Play.prototype.createMobs = function() {
     for(var j = 0; j< this.map.size; j++) {
       if(this.map.walkable[i][j]) {
         if(Math.floor((Math.random() * 100) + 1) > 95) {
-          var mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'tiles', 248);
+          var mobBaseLevel = Math.floor((Math.random() * 3)),
+              o = mobBaseLevel * 3,
+              mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
 
-          this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i*j)+i, i+j, {x: this.map.size, y: this.map.size}, mobSprite, this.mobs.entities, this.map.walkable));
+          console.log('Level: ', mobBaseLevel);
+          mobSprite.animations.add('walk_left', [12 + o, 13 + o, 14 + o], 10, true);
+          mobSprite.animations.add('walk_right', [24 + o, 25 + o, 26 + o], 10, true);
+          mobSprite.animations.add('walk_up', [36 + o, 37 + o, 38 + o], 10, true);
+          mobSprite.animations.add('walk_down', [0 + o, 1 + o, 2 + o], 10, true);
+          mobSprite.animations.add('damage', [0,1,2], 10, true);
+          mobSprite.animations.add('attack', [0,1,2], 10, true);
+
+          this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i*j)+i, i, {x: this.map.size, y: this.map.size}, mobSprite, this.mobs.entities, this.map.walkable));
         }
       }
     }
@@ -315,8 +325,6 @@ Play.prototype.update = function() {
     } else if(this.cursors.right.isDown) {
       this.movePlayer(1, 0);
       this.player.sprite.animations.play('walk_right');
-    } else {
-      this.player.sprite.animations.play('stand');
     }
 
     if(this.keys.spaceBar.isDown) {
