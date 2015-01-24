@@ -1,9 +1,9 @@
 'use strict';
 
 var game = new Phaser.Game({
-    height: window.innerHeight,
-    width: window.innerWidth,
-    parent: 'content'
+  height: window.innerHeight,
+  width: window.innerWidth,
+  parent: 'content'
 });
 
 game.state.add('boot', require('./states/boot'));
@@ -25,3 +25,34 @@ game.updateMapSize = function() {
 window.onresize = game.updateMapSize;
 
 console.log('%c We are the %c#gamesRum ', 'background: #222; color: #aabb55', 'background: #222; color: #aaffee');
+
+var World = require('./entities/world');
+var world = new World();
+world.init();
+
+document.body.onkeydown = function(event) {
+  event = event || window.event;
+  var keycode = event.charCode || event.keyCode;
+  if (keycode === 37) {
+    console.log('<');
+    world.goPreviousLevel();
+    world.room.map.print();
+  } else if (keycode === 39) {
+    console.log('>');
+    world.goNextLevel();
+    world.room.map.print();
+  } else {
+    console.log('~');
+  }
+}
+
+
+//var Maze = require('./entities/maze');
+//var maze = new Maze(17);
+//maze.generate();
+//maze.print();
+//
+//var Cave = require('./entities/cave');
+//var cave = new Cave(16);
+//cave.generate();
+//cave.print();

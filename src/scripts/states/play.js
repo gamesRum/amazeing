@@ -83,7 +83,7 @@ Play.prototype.drawMaze = function() {
     this.map.walkable[i] = new Array(this.map.size);
   }
 
-  this.map.level.world.iterate(function(item, y, x) {
+  this.map.level.map.iterate(function(item, y, x) {
     if (item === 0) {
       self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 246);
       self.map.walkable[x][y] = false;
