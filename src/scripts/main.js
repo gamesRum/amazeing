@@ -1,7 +1,5 @@
 'use strict';
 
-var cfg = require('../../config');
-
 var game = new Phaser.Game({
     height: window.innerHeight,
     width: window.innerWidth,
