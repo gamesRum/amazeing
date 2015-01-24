@@ -7,6 +7,11 @@ var Play = module.exports = function() {
 Play.prototype = Object.create(Phaser.State.prototype);
 Play.prototype.constructor = Play;
 
+Play.prototype.map = {
+  height: 31,
+  width: 31
+};
+
 Play.prototype.player = {
   sprite: null,
   moving: false,
@@ -19,8 +24,10 @@ Play.prototype.player = {
 };
 
 Play.prototype.drawMaze = function() {
-  for (var i = 0; i < 64; i += 1) {
-    for (var j = 0; j < 64; j += 1) {
+  this.game.world.setBounds(0, 0, (this.map.width+1)*32, (this.map.height+1)*32);
+
+  for (var i = 0; i <= this.map.width; i += 1) {
+    for (var j = 0; j <= this.map.height; j += 1) {
       if(Math.floor((Math.random() * 100) + 1) > 75) {
         this.walls.create(i*32, j*32, 'tiles', 264);
       } else {
@@ -43,7 +50,7 @@ Play.prototype.create = function() {
   this.walls.physicsBodyType = Phaser.Physics.ARCADE;
 
   this.player.sprite = this.game.add.sprite(32, 32, 'avatar');
-  this.game.physics.enable(this.player.sprite);
+  this.game.physics.enable([this.player.sprite, this.walls], Phaser.Physics.ARCADE);
   this.game.camera.follow(this.player.sprite);
   this.player.sprite.body.setSize(12, 16, 2, 0);
   this.player.sprite.bringToTop();
@@ -61,7 +68,11 @@ Play.prototype.create = function() {
   this.cursors = this.game.input.keyboard.createCursorKeys();
 };
 
-Play.prototype.onComplete = function() {
+Play.prototype.startMoving = function() {
+  this.player.moving = true;
+};
+
+Play.prototype.stopMoving = function() {
   this.player.moving = false;
 };
 
@@ -70,15 +81,32 @@ Play.prototype.movePlayer = function(left, top) {
   this.player.location.y += top;
   this.player.moving = true;
 
-  this.game.add.tween(this.player.sprite).to(
+  if(this.player.location.x < 0) {
+    this.player.location.x = 0;
+  }
+
+  if(this.player.location.y < 0) {
+    this.player.location.y = 0;
+  }
+
+  if(this.player.location.x > this.map.width) {
+    this.player.location.x = this.map.width;
+  }
+
+  if(this.player.location.y > this.map.height) {
+    this.player.location.y = this.map.height;
+  }
+
+  var animation = this.game.add.tween(this.player.sprite).to(
     {
       x: this.player.location.x * 32,
       y: this.player.location.y * 32
     },
     200, Phaser.Easing.Linear.None, true
-  ).onComplete.addOnce(this.onComplete, this);
+  );
 
-  this.game.physics.arcade.collide(this.player.sprite, self.walls);
+  animation.onStart.add(this.startMoving, this)
+  animation.onComplete.addOnce(this.stopMoving, this);
 };
 
 Play.prototype.update = function() {
@@ -86,10 +114,8 @@ Play.prototype.update = function() {
   this.player.sprite.body.velocity.setTo(0, 0);
 
   if(!this.player.moving) {
-    this.player.sprite.animations.play('stand');
-
-    console.log('waiting key');
     this.game.input.update();
+    this.player.sprite.animations.play('stand');
 
     if(this.cursors.down.isDown) {
       this.movePlayer(0,1);
@@ -110,5 +136,7 @@ Play.prototype.update = function() {
       this.movePlayer(1, 0);
       this.player.sprite.animations.play('walk_right');
     }
+
+    this.game.physics.arcade.collide(this.player.sprite, this.walls);
   }
 };
