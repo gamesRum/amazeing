@@ -45,4 +45,23 @@ utils.nouns = [
   'Overpass', 'Branch', 'Wing'
 ];
 
+utils.getTaunt = function() {
+  return this.taunts[this.randomInt(this.taunts.length)];
+};
+
+utils.taunts = [
+  'Go home and be a family man',
+  'My world will tear you apart',
+  'Run, coward',
+  'You\'ve fought like a little kitty',
+  'You pathetic creature of meat and bone',
+  'You weak, pathetic fool',
+  'You spoony bard',
+  'I salute my fallen friend',
+  '* Laugh *',
+  'You are the best player, but the world won\'t see that',
+  'Better luck next time',
+  'You were weak'
+];
+
 module.exports = utils;

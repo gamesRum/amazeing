@@ -1,6 +1,7 @@
 'use strict';
 
-var World = require('../entities/world');
+var World = require('../entities/world'),
+  utils = utils = require('../utils');
 
 var Play = module.exports = function () {
   Phaser.State.call(this);
@@ -460,6 +461,8 @@ Play.prototype.create = function () {
     turn: true
   };
 
+  this.taunt = utils.getTaunt();
+
   this.player.game = this.game;
   this.player.showDamage = this.showDamage;
 
@@ -756,7 +759,7 @@ Play.prototype.update = function() {
 
   if (!this.player.isAlive()) {
     this.player.sprite.animations.play('die');
-    this.showMessage('You are weak. You were slain!', {
+    this.showMessage(this.taunt + '. You were slain!', {
       accept: function() {
         window.location.reload();
       }
