@@ -16,7 +16,7 @@ var Mob = require('../entities/mob');
 Play.prototype.map = {
   level: 1,
   name: 'The Forest',
-  size: 19,
+  size: 9,
   tile: {
     height: 32,
     width: 32
@@ -89,7 +89,7 @@ Play.prototype.updateStats = function() {
     statusBar.appendChild(span);
   }
 
-  addText('Map', this.map.name + ' - ' + this.map.level);
+  addText('Map', this.map.name);
   addText('Level', this.player.stats.level);
   addText('HP', this.player.stats.hp);
   addText('SP', this.player.stats.sp);
@@ -146,12 +146,12 @@ Play.prototype.drawMaze = function() {
 
   this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', tileset[biome].background);
   this.map.walkable = map.generateEmpty(map.size);
-  this.map.level = this.gameWorld.getCurrentLevel();
-  this.map.name = this.gameWorld.room.biome + ' ' + this.map.level;
+  this.map.level = this.gameWorld.currentRoomIndex;
+  this.map.name = this.gameWorld.room.biome + ' - ' + this.map.level;
 
   console.log('Map', map);
   console.log('Walkable', this.map.walkable);
-  console.log('Biome', this.gameWorld.room.biome);
+  console.log('Entering:', this.map.name);
 
   map.iterate(function(cell, y, x) {
     self.map.walkable[x][y] = true;
@@ -195,9 +195,7 @@ Play.prototype.drawMaze = function() {
 };
 
 Play.prototype.loadMap = function(map) {
-  console.log('Entering:', map.name + ' - ' + map.level);
-  this.map.name = map.name;
-  this.map.level = map.level;
+  this.gameWorld.goNextLevel();
 
   this.walls = this.game.add.group();
   this.walls.enableBody = true;
@@ -283,7 +281,6 @@ Play.prototype.checkWarps = function(x, y) {
 
     if(warp.x === x && warp.y === y) {
       if(warp.level) {
-        this.gameWorld.goNextLevel();
         this.loadMap(warp);
       } else {
         console.log('You can not escape from here!');
