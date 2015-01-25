@@ -304,7 +304,10 @@ Play.prototype.loadMap = function (map) {
   this.player.sprite.position.y = this.player.location.y * this.player.height;
   this.player.sprite.bringToTop();
 
-  this.player.sprite.animations.add('stand', [0], 1, false);
+  this.player.sprite.animations.add('look_left', [4], 1, false);
+  this.player.sprite.animations.add('look_right', [8], 1, false);
+  this.player.sprite.animations.add('look_up', [12], 1, false);
+  this.player.sprite.animations.add('look_down', [0], 1, false);
   this.player.sprite.animations.add('walk_left', [4, 5, 6, 7], 10, true);
   this.player.sprite.animations.add('walk_right', [8, 9, 10, 11], 10, true);
   this.player.sprite.animations.add('walk_up', [12, 13, 14, 15], 10, true);
@@ -548,7 +551,6 @@ Play.prototype.update = function () {
         window.location.reload();
       }
     });
-
   }
 
   if (!this.player.moving && this.player.isAlive()) {
@@ -556,16 +558,22 @@ Play.prototype.update = function () {
 
     if (this.cursors.down.isDown) {
       this.movePlayer(0, 1);
-      this.player.sprite.animations.play('walk_down');
+      this.player.orientation = 'down';
     } else if (this.cursors.up.isDown) {
       this.movePlayer(0, -1);
-      this.player.sprite.animations.play('walk_up');
+      this.player.orientation = 'up';
     } else if (this.cursors.left.isDown) {
       this.movePlayer(-1, 0);
-      this.player.sprite.animations.play('walk_left');
+      this.player.orientation = 'left';
     } else if (this.cursors.right.isDown) {
       this.movePlayer(1, 0);
-      this.player.sprite.animations.play('walk_right');
+      this.player.orientation = 'right';
+    }
+
+    if(this.player.moving) {
+      this.player.sprite.animations.play('walk_'+this.player.orientation);
+    } else {
+      this.player.sprite.animations.play('look_'+this.player.orientation);
     }
 
     if (this.keys.spaceBar.isDown) {

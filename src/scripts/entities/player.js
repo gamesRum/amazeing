@@ -7,6 +7,7 @@ var Player = module.exports = function(hp, name, genre) {
   this.stats.hp = hp;
   this.name = name;
   this.genre = genre;
+  this.orientation = null;
 };
 
 Player.prototype = Object.create(Being.prototype);
