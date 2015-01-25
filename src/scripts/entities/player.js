@@ -18,6 +18,26 @@ Player.prototype.update = function() {
   Being.call(this);
 };
 
+Player.prototype.damage = function(str) {
+  if(this.stats.hp) {
+    var hit = (str * 2) - Math.round(this.stats.def * 0.5);
+
+    if(hit > 0) {
+      this.stats.hp = this.stats.hp - hit;
+    }
+
+    this.showDamage(hit, this.sprite.x, this.sprite.y, 'yellow');
+
+    if(this.stats.hp < 0) {
+      this.stats.hp = 0;
+    }
+
+    return true;
+  }
+
+  return false;
+};
+
 Player.prototype.attack = function(entity) {
 
   if(entity.damage(this.stats.str)) {

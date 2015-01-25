@@ -435,6 +435,9 @@ Play.prototype.create = function () {
     turn: true
   };
 
+  this.player.game = this.game;
+  this.player.showDamage = this.showDamage;
+
   this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
   this.gameWorld.init();
@@ -658,6 +661,19 @@ Play.prototype.timerTick = function () {
   this.timer.turn = true;
 };
 
+Play.prototype.showDamage = function(damage, x, y, color) {
+  var damageText = this.game.add.text(x, y, '-' + damage, {
+    font: "bold 20px Arial",
+    fill: color,
+    align: "center"
+  });
+
+  this.game.time.events.add(100, function() {
+    this.game.add.tween(damageText).to({y: 0}, 1500, Phaser.Easing.Linear.None, true);
+    this.game.add.tween(damageText).to({alpha: 0}, 300, Phaser.Easing.Linear.None, true);
+  }, this);
+};
+
 Play.prototype.update = function() {
   var self = this;
 
@@ -675,16 +691,7 @@ Play.prototype.update = function() {
     var damage = (self.player.stats.str * 2) - pointsPerDefense;
     mob.damage(damage || 0);
 
-    var damageText = self.game.add.text(mob.position.x, mob.position.y, '-' + damage, {
-      font: "bold 20px Arial",
-      fill: "#ff0044",
-      align: "center"
-    });
-
-    self.game.time.events.add(100, function() {
-      self.game.add.tween(damageText).to({y: 0}, 1500, Phaser.Easing.Linear.None, true);
-      self.game.add.tween(damageText).to({alpha: 0}, 300, Phaser.Easing.Linear.None, true);
-    }, self);
+    this.showDamage(damage, mob.position.x, mob.position.y, 'red');
 
     setTimeout(function() {
       mob.customGodMode = false;
