@@ -44,6 +44,19 @@ Mapa.prototype.generateEmpty = function(size) {
 };
 
 /*
+ * @desc clone the array map
+ * @return []
+ */
+Mapa.prototype.clone = function() {
+  var map = [],
+    size = size || this.size;
+  for (var i = 0; i < size; i += 1) {
+    map.push(this.map.slice());
+  }
+  return map;
+};
+
+/*
  * @desc iterates over the map
  * @param function perItem - callback that receives current item, index-i, index-j
  * @param function perLine - callback that receives the complete row, index-i

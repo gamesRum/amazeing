@@ -9,8 +9,9 @@ var World = module.exports = function() {
   this.currentRoomIndex = 0;
 };
 
-World.prototype.init = function() {
-  var newRoom = new Room('maze', 5).init();
+World.prototype.init = function(size) {
+  size = size || 15;
+  var newRoom = new Room('maze', size).init();
   this.roomsArray.push(newRoom);
   this.room = newRoom;
   this.currentRoomIndex = 0;
@@ -19,8 +20,8 @@ World.prototype.init = function() {
 /*
  * @desc go to the next level
  */
-World.prototype.goNextLevel = function(mobsState, itemsState) {
-  this.room.saveState(mobsState, itemsState);
+World.prototype.goNextLevel = function(state) {
+  this.room.saveState(state);
   if (this.roomsArray.length <= ++this.currentRoomIndex) {
     this.addNewRoom();
   }
@@ -32,8 +33,8 @@ World.prototype.goNextLevel = function(mobsState, itemsState) {
  * @desc go to the prev level
  * @return bool - success or failure
  */
-World.prototype.goPreviousLevel = function(mobsState, itemsState) {
-  this.room.saveState(mobsState, itemsState);
+World.prototype.goPreviousLevel = function(state) {
+  this.room.saveState(state);
   if (0 <= this.currentRoomIndex - 1) {
     this.room = this.roomsArray[--this.currentRoomIndex];
     return true;

@@ -1,13 +1,15 @@
 'use strict';
 
+var World = require('../entities/world');
+
 var Play = module.exports = function() {
   Phaser.State.call(this);
+  this.gameWorld = new World();
 };
 
 Play.prototype = Object.create(Phaser.State.prototype);
 Play.prototype.constructor = Play;
 
-var Room = require('../entities/room');
 var Player = require('../entities/player');
 var Mob = require('../entities/mob');
 
@@ -30,6 +32,16 @@ Play.prototype.map = {
       x: 0,
       y: 0
     }
+  }
+};
+
+var tileset = {
+  forest: {
+    background: 0,
+    wall: 246,
+    enter: 403,
+    exit: 420,
+    decoration: [224, 225, 226, 227]
   }
 };
 
@@ -91,52 +103,53 @@ Play.prototype.createMobs = function() {
 
 Play.prototype.drawMaze = function() {
   var self = this,
-      map_width = (this.map.size+1) * this.map.tile.width,
-      map_height = (this.map.size+1) * this.map.tile.height;
+    map_width = (this.map.size + 1) * this.map.tile.width,
+    map_height = (this.map.size + 1) * this.map.tile.height;
 
   this.game.world.setBounds(0, 0, map_width, map_height);
 
-  this.map.level = new Room('maze', this.map.size);
-  this.map.level.init();
+  var biome = this.gameWorld.room.biome;
+  var map = this.gameWorld.room.map;
 
-  this.map.walkable = new Array(this.map.size);
-  for(var i = 0; i< this.map.size; i++) {
-    this.map.walkable[i] = new Array(this.map.size);
-  }
+  this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', 8);
+  this.map.walkable = map.generateEmpty(map.size);
 
-  this.map.level.map.iterate(function(type, y, x) {
+  map.iterate(function(cell, y, x) {
     self.map.walkable[x][y] = true;
-
-    switch(type) {
+    switch (cell) {
       case 1:
-        var textureModifier = Math.floor(Math.random() * 3) + 1;
-
-        if(((Math.random() * 100) + 1) > 95){
-          self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 223+textureModifier);
+        var items = tileset[biome].decoration,
+          tile = items[Math.floor(Math.random() * items.length)];
+        if (((Math.random() * 100) + 1) > 95) {
+          self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tile);
         }
-
         break;
       case 2:
-        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 403);
+        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].enter);
         self.map.warps.start.x = x;
         self.map.warps.start.y = y;
         break;
       case 3:
-        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 420);
+        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].exit);
         self.map.warps.end.x = x;
         self.map.warps.end.y = y;
         break;
       default:
-        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', 246);
+        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].wall);
         self.map.walkable[x][y] = false;
+        break;
     }
   });
 
+  this.world.bringToTop(this.walls);
+
   this.createMobs();
-  this.player.sprite.position.x = self.map.warps.start.x * self.map.tile.width;
-  this.player.sprite.position.y = self.map.warps.start.y * self.map.tile.height;
-  this.player.location.x = self.map.warps.start.x;
-  this.player.location.y = self.map.warps.start.y;
+
+  var spawnPoint = map.getPlayerSpawnPoint();
+  this.player.sprite.position.x = spawnPoint.column * self.map.tile.width;
+  this.player.sprite.position.y = spawnPoint.row * self.map.tile.height;
+  this.player.location.x = spawnPoint.column;
+  this.player.location.y = spawnPoint.row;
   this.player.sprite.bringToTop();
 };
 
@@ -145,9 +158,11 @@ Play.prototype.create = function() {
     turn: true
   };
 
+  /* Game World */
+  this.gameWorld.init(this.map.size);
+
   this.game.physics.startSystem(Phaser.Physics.ARCADE);
   this.game.stage.disableVisibilityChange = true;
-  this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', 8);
 
   this.walls = this.game.add.group();
   this.walls.enableBody = true;
@@ -219,6 +234,8 @@ Play.prototype.checkWarps = function(x, y) {
 
     if(warp.x === x && warp.y === y) {
       console.log('Warp reached!', warp.id);
+      // this.gameWorld.goNextLevel();
+      // this.drawMaze();
       // TODO: we should load a new map, depending on warp.id!!!
     }
   }
