@@ -164,7 +164,7 @@ Play.prototype.drawMaze = function() {
         }
         break;
       case 2:
-        if(this.map.level > 1) {
+        if(self.map.level > 1) {
           self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].enter);
           self.map.warps.start.x = x;
           self.map.warps.start.y = y;
@@ -195,8 +195,6 @@ Play.prototype.drawMaze = function() {
 };
 
 Play.prototype.loadMap = function(map) {
-  this.gameWorld.goNextLevel();
-
   this.walls = this.game.add.group();
   this.walls.enableBody = true;
   this.walls.physicsBodyType = Phaser.Physics.ARCADE;
@@ -281,9 +279,11 @@ Play.prototype.checkWarps = function(x, y) {
 
     if(warp.x === x && warp.y === y) {
       if(warp.level) {
+        this.gameWorld.goNextLevel();
         this.loadMap(warp);
       } else {
-        console.log('You can not escape from here!');
+        this.gameWorld.goPreviousLevel();
+        this.loadMap(warp);
       }
     }
   }
