@@ -395,7 +395,8 @@ Play.prototype.loadMap = function (map) {
   this.player.sprite.animations.add('die', animations[this.player.race].die, 1, false);
 
   this.sword = {};
-  this.sword.sprite = this.game.add.sprite(-34, -34, 'items', 70);
+  this.sword.sprite = this.game.add.sprite(0, 0, 'items', 70);
+  this.sword.sprite.scale.setTo(0.7,0.7);
   this.sword.sprite.name = 'sword';
   this.sword.sprite.physicsBodyType = Phaser.Physics.ARCADE;
   this.sword.sprite.exists = false;
@@ -710,27 +711,27 @@ Play.prototype.update = function() {
 
       if (this.player.orientation === 'up') {
         this.sword.sprite.angle = 45;
-        this.sword.sprite.position.x = this.player.sprite.position.x + 16;
-        this.sword.sprite.position.y = this.player.sprite.position.y - 32;
+        this.sword.sprite.position.x = this.player.sprite.position.x + 8;
+        this.sword.sprite.position.y = this.player.sprite.position.y - 16;
         this.sword.sprite.body.offset.x = -18;
         this.sword.sprite.body.offset.y = 0;
         this.player.sprite.bringToTop();
       } else if (this.player.orientation === 'down') {
         this.sword.sprite.angle = -135;
-        this.sword.sprite.position.x = this.player.sprite.position.x + 16;
-        this.sword.sprite.position.y = this.player.sprite.position.y + 64;
+        this.sword.sprite.position.x = this.player.sprite.position.x + 24;
+        this.sword.sprite.position.y = this.player.sprite.position.y + 48;
         this.sword.sprite.body.offset.x = -18;
         this.sword.sprite.body.offset.y = -34;
       } else if (this.player.orientation === 'right') {
         this.sword.sprite.angle = 135;
-        this.sword.sprite.position.x = this.player.sprite.position.x + 60;
-        this.sword.sprite.position.y = this.player.sprite.position.y + 20;
+        this.sword.sprite.position.x = this.player.sprite.position.x + 40;
+        this.sword.sprite.position.y = this.player.sprite.position.y + 24;
         this.sword.sprite.body.offset.x = -34;
         this.sword.sprite.body.offset.y = -20;
       } else {
         this.sword.sprite.angle = -45;
-        this.sword.sprite.position.x = this.player.sprite.position.x - 28;
-        this.sword.sprite.position.y = this.player.sprite.position.y + 20;
+        this.sword.sprite.position.x = this.player.sprite.position.x - 16;
+        this.sword.sprite.position.y = this.player.sprite.position.y + 24;
         this.sword.sprite.body.offset.x = 0;
         this.sword.sprite.body.offset.y = -20;
       }
