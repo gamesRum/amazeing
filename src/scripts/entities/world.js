@@ -69,7 +69,8 @@ World.prototype.getPlayerSpawnPoint = function() {
  * @return int - map size
  */
 World.prototype.getMapSize = function() {
-  return Math.round((fibonacci(this.currentLevel) * 2) / 2);
+  var newSize = this.currentLevel < 7 ? 8 : this.currentLevel;
+  return newSize * 2 + 1;
 };
 
 var fibonacci = (function(Math) {
