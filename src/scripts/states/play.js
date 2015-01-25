@@ -213,7 +213,12 @@ Play.prototype.openNPC = function (name, message, options, callback) {
         self.hideMessage();
         callback(e.target.innerText);
       };
+
       $optionButtons.appendChild($optionButton);
+
+      if(index < 1) {
+        $optionButton.focus();
+      }
     }
   }
 
