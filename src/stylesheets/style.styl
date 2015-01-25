@@ -42,12 +42,15 @@ html, body
   position fixed
   width 100%
 
-  span
+  blockquote
     background rgba(255,255,255,0.8)
     border-radius 3px
     color #000
+    display inline-block
+    float right
     line-height 20px
-    padding 10px
+    margin 0 20px
+    padding 10px 20px
 
     strong
       color #fff
@@ -63,6 +66,37 @@ html, body
     -moz-transition: opacity 0.5s ease-in;
     -o-transition: opacity 0.5s ease-in;
     opacity 1
+
+  p
+    float right
+    margin-right 15px
+
+  div
+    background url('/assets/img/rpg_faces_just_because_by_eternitymaze-d5mq78r.png') top left no-repeat
+    border 2px solid rgba(255,255,255,0.5)
+    border-radius 50%
+    display block
+    float right
+    height 46px
+    width 46px
+
+    &.human
+      background-position 0 -146px
+
+    &.ogre
+      background-position -96px -146px
+
+    &.zombie
+      background-position -48px -146px
+
+    &.armor
+      background-position -48px 0
+
+    &.shield
+      background-position -144px -48px
+
+    &.hospital
+      background-position -97px -48px
 
 #messageBox
   background rgba(0,0,0,0.5)

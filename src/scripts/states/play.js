@@ -186,10 +186,15 @@ Play.prototype.showMessage = function (message, callbacks) {
   }
 };
 
-Play.prototype.showPopup = function (message) {
+Play.prototype.showPopup = function (message, faceClass) {
   $statusBar.style.display = 'block';
   $popupBox.className = "visible";
-  $popupBox.innerHTML = '<span>' + message + '</span>';
+
+  if(!faceClass) {
+    faceClass = this.player.race;
+  }
+
+  $popupBox.innerHTML = '<blockquote><div class="' + faceClass + ' "></div><p>' + message + '</p></blockquote>';
 
   var self = this;
   setTimeout(function () {
@@ -509,6 +514,7 @@ Play.prototype.checkWarps = function (x, y) {
 
       switch(npc.type) {
         case 0:
+          self.showPopup('Hello, darling!!!', 'hospital');
           this.openNPC(
             'Hospital',
             'Do you want to get healthy? <br/> <small>It will cost to you about $100</small>',
@@ -518,15 +524,16 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.hp = self.player.stats.maxHP;
-                  self.showPopup('Thank you!!!');
+                  self.showPopup('Thank you!!!', 'hospital');
                 } else {
-                  self.showPopup('You need more money!!!');
+                  self.showPopup('You need more money!!!', 'hospital');
                 }
               }
             }
           );
           break;
         case 1:
+          self.showPopup('Welcome, foreigner!!!', 'armor');
           this.openNPC(
             'Armor store',
             'Do you want to improve your armor STR+1? <br/> <small>It will cost to you about $100</small>',
@@ -536,15 +543,16 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.str += 1;
-                  self.showPopup('Thank you!!!');
+                  self.showPopup('Thank you!!!', 'armor');
                 } else {
-                  self.showPopup('You need more money!!!');
+                  self.showPopup('You need more money!!!', 'armor');
                 }
               }
             }
           );
           break;
         case 2:
+          self.showPopup('Are you looking for adventure?', 'shield');
           this.openNPC(
             'Shield store',
             'Do you want to improve your shield DEF+1? <br/> <small>It will cost to you about $100</small>',
@@ -554,9 +562,9 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.def += 1;
-                  self.showPopup('Thank you!!!');
+                  self.showPopup('Thank you!!!', 'shield');
                 } else {
-                  self.showPopup('You need more money!!!');
+                  self.showPopup('You need more money!!!', 'shield');
                 }
               }
             }
