@@ -16,7 +16,7 @@ var Mob = require('../entities/mob');
 Play.prototype.map = {
   level: 1,
   name: 'The Forest',
-  size: 9,
+  size: null,
   tile: {
     height: 32,
     width: 32
@@ -148,6 +148,7 @@ Play.prototype.drawMaze = function() {
   this.map.walkable = map.generateEmpty(map.size);
   this.map.level = this.gameWorld.currentRoomIndex;
   this.map.name = this.gameWorld.room.biome + ' - ' + this.map.level;
+  this.map.size = this.gameWorld.room.map.size;
 
   console.log('Map', map);
   console.log('Walkable', this.map.walkable);
@@ -224,7 +225,7 @@ Play.prototype.create = function() {
   };
 
   /* Game World */
-  this.gameWorld.init(this.map.size);
+  this.gameWorld.init();
 
   this.game.physics.startSystem(Phaser.Physics.ARCADE);
   this.game.stage.disableVisibilityChange = true;
