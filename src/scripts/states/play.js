@@ -80,6 +80,7 @@ var tileset = {
 var $statusBar = document.getElementById('status'),
     $messageBox = document.getElementById('messageBox'),
     $text = document.getElementById('messageText'),
+    $optionButtons = document.getElementById('optionButtons'),
     $buttons = {
       accept: document.getElementById('acceptButton'),
       cancel: document.getElementById('cancelButton'),
@@ -108,43 +109,62 @@ Play.prototype.updateStats = function () {
 };
 
 Play.prototype.hideMessage = function () {
-  $messageBox.style.display = "none";
+  $messageBox.className = "hidden";
 };
 
 Play.prototype.showMessage = function (message, callbacks) {
-  $messageBox.style.display = "block";
-  $text.innerText = message;
+  $messageBox.className = "visible";
+  $text.innerHTML = message;
 
-  if(callbacks.accept) {
-    $buttons.accept.onclick = callbacks.accept;
-    $buttons.accept.style.display = "inline-block";
-  } else {
-    $buttons.accept.removeAttribute("onclick");
-    $buttons.accept.style.display = "none";
+  function setButton($element, callback) {
+    if(callback) {
+      $element.onclick = callbacks.accept;
+      $element.style.display = "inline-block";
+    } else {
+      $element.removeAttribute("onclick");
+      $element.style.display = "none";
+    }
   }
 
-  if(callbacks.cancel) {
-    $buttons.cancel.onclick = callbacks.cancel;
-    $buttons.cancel.style.display = "inline-block";
-  } else {
-    $buttons.cancel.removeAttribute("onclick");
-    $buttons.cancel.style.display = "none";
+  setButton($buttons.accept, callbacks && callbacks.accept);
+  setButton($buttons.cancel, callbacks && callbacks.cancel);
+  setButton($buttons.buy, callbacks && callbacks.buy);
+  setButton($buttons.sell, callbacks && callbacks.sell);
+
+  if(!callbacks) {
+    var self = this;
+    setTimeout(function () {
+      self.hideMessage()
+    }, 3000);
+  }
+};
+
+Play.prototype.openNPC = function (name, message, options, callback) {
+  $messageBox.className = "visible";
+  $text.innerHTML = '<h1>' + name + '</h1><p>' + message + '</p>';
+  $optionButtons.innerHTML = '';
+
+  if(options) {
+    for(var index in options) {
+      var option = options[index],
+        $optionButton = document.createElement('button'),
+        self = this;
+
+      $optionButton.innerHTML = option;
+      $optionButton.onclick = function(e){
+        $optionButtons.innerText = '';
+        self.hideMessage();
+        callback(e.target.innerText);
+      };
+      $optionButtons.appendChild($optionButton);
+    }
   }
 
-  if(callbacks.buy) {
-    $buttons.buy.onclick = callbacks.buy;
-    $buttons.buy.style.display = "inline-block";
-  } else {
-    $buttons.buy.removeAttribute("onclick");
-    $buttons.buy.style.display = "none";
-  }
-
-  if(callbacks.sell) {
-    $buttons.sell.onclick = callbacks.sell;
-    $buttons.sell.style.display = "inline-block";
-  } else {
-    $buttons.sell.removeAttribute("onclick");
-    $buttons.sell.style.display = "none";
+  if(!callback) {
+    var self = this;
+    setTimeout(function () {
+      self.hideMessage()
+    }, 3000);
   }
 };
 
@@ -154,38 +174,65 @@ Play.prototype.render = function () {
   this.updateStats();
 };
 
+Play.prototype.createNpcs = function () {
+  var npcCount = Math.round(this.map.size * 0.05);
+
+  this.npcs = [];
+
+  while(npcCount > 0) {
+    var i = Math.floor((Math.random() * this.map.size)),
+      j = Math.floor((Math.random() * this.map.size));
+
+    if (this.map.walkable[i][j]) {
+      var npcType = Math.floor((Math.random() * 3)),
+        npcSprite = this.game.add.group();
+
+        npcSprite.x = i * this.map.tile.width;
+        npcSprite.y = j * this.map.tile.width;
+        npcSprite.create(0,0, 'tiles', 141);
+        npcSprite.create(4, -9, 'tiles', 144 + npcType).scale.setTo(0.7, 0.7);
+
+      this.npcs.push({
+        sprite: npcSprite,
+        type: npcType,
+        x: i,
+        y: j
+      });
+
+      npcCount --;
+    }
+  }
+};
+
 Play.prototype.createMobs = function () {
   var mobCount = Math.round(this.map.size * 0.1),
-    mobID = 0;
+      mobID = 0;
 
   this.mobs = this.game.add.group();
   this.mobs.entities = [];
-  this.mobs.enableBody = true;
-  this.mobs.physicsBodyType = Phaser.Physics.ARCADE;
 
-  for (var i = 0; i < this.map.size; i++) {
-    for (var j = 0; j < this.map.size; j++) {
-      if (this.map.walkable[i][j]) {
-        if (mobCount--) {
-          if (Math.floor((Math.random() * 100) + 1) > 98) {
-            var mobBaseLevel = Math.floor((Math.random() * 3)),
-              o = mobBaseLevel * 3,
-              mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
+  while(mobCount > 0) {
+    var i = Math.floor((Math.random() * this.map.size)),
+      j = Math.floor((Math.random() * this.map.size));
 
-            mobSprite.animations.add('walk_left', [12 + o, 13 + o, 14 + o], 10, true);
-            mobSprite.animations.add('walk_right', [24 + o, 25 + o, 26 + o], 10, true);
-            mobSprite.animations.add('walk_up', [36 + o, 37 + o, 38 + o], 10, true);
-            mobSprite.animations.add('walk_down', [0 + o, 1 + o, 2 + o], 10, true);
-            mobSprite.animations.add('damage', [0, 1, 2], 10, true);
-            mobSprite.animations.add('attack', [0, 1, 2], 10, true);
+    if (this.map.walkable[i][j]) {
+      var mobBaseLevel = Math.floor((Math.random() * 3)),
+        o = mobBaseLevel * 3,
+        mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
 
-            this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i * j) + i, i, {
-              x: this.map.size,
-              y: this.map.size
-            }, mobSprite, this.mobs.entities, this.map.walkable));
-          }
-        }
-      }
+      mobSprite.animations.add('walk_left', [12 + o, 13 + o, 14 + o], 10, true);
+      mobSprite.animations.add('walk_right', [24 + o, 25 + o, 26 + o], 10, true);
+      mobSprite.animations.add('walk_up', [36 + o, 37 + o, 38 + o], 10, true);
+      mobSprite.animations.add('walk_down', [0 + o, 1 + o, 2 + o], 10, true);
+      mobSprite.animations.add('damage', [0, 1, 2], 10, true);
+      mobSprite.animations.add('attack', [0, 1, 2], 10, true);
+
+      this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i * j) + i, i, {
+        x: this.map.size,
+        y: this.map.size
+      }, mobSprite, this.mobs.entities, this.map.walkable));
+
+      mobCount--;
     }
   }
 };
@@ -197,10 +244,13 @@ Play.prototype.drawMaze = function () {
       map_width = 0,
       map_height = 0;
 
+  this.walls = this.game.add.group();
   this.map.walkable = map.generateEmpty(map.size);
   this.map.level = this.gameWorld.currentRoomIndex;
   this.map.name = this.gameWorld.room.name;
   this.map.size = this.gameWorld.room.map.size;
+  this.showMessage('Entering '+ this.map.name);
+
   map_width = (this.map.size + 1) * this.map.tile.width;
   map_height = (this.map.size + 1) * this.map.tile.height;
   this.game.world.setBounds(0, 0, map_width, map_height);
@@ -236,7 +286,7 @@ Play.prototype.drawMaze = function () {
   });
 
   this.world.bringToTop(this.walls);
-
+  this.createNpcs();
   this.createMobs();
 
   var spawnPoint = map.getPlayerSpawnPoint(this.gameWorld.isGoingInverse);
@@ -248,14 +298,7 @@ Play.prototype.drawMaze = function () {
 };
 
 Play.prototype.loadMap = function (map) {
-  this.walls = this.game.add.group();
-  this.walls.enableBody = true;
-  this.walls.physicsBodyType = Phaser.Physics.ARCADE;
-
   this.player.sprite = this.game.add.sprite(this.player.width, this.player.height, 'avatar');
-  this.game.physics.enable(this.player.sprite, Phaser.Physics.ARCADE);
-  this.game.camera.follow(this.player.sprite);
-  this.player.sprite.body.setSize(12, 16, 2, 0);
   this.player.sprite.position.x = this.player.location.x * this.player.width;
   this.player.sprite.position.y = this.player.location.y * this.player.height;
   this.player.sprite.bringToTop();
@@ -269,6 +312,8 @@ Play.prototype.loadMap = function (map) {
   this.player.sprite.animations.add('attack', [20, 21, 22, 23], 10, true);
   this.player.sprite.animations.add('die', [27], 1, false);
 
+  this.game.camera.follow(this.player.sprite);
+
   this.drawMaze();
 };
 
@@ -279,30 +324,21 @@ Play.prototype.initKeyboard = function() {
   this.keys = {
     spaceBar: this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
     escape: this.game.input.keyboard.addKey(Phaser.Keyboard.ESC)
-  }
-
-  this.hideMessage();
+  };
 };
 
 Play.prototype.create = function () {
-  var self = this;
-
   this.timer = {
     turn: true
   };
 
-  /* Game World */
   this.gameWorld.init();
 
-  this.game.physics.startSystem(Phaser.Physics.ARCADE);
   this.game.stage.disableVisibilityChange = true;
   this.game.stage.backgroundColor = 0x222222;
 
-  this.showMessage('Welcome to UberQuest!', {
-    accept: function(){
-      self.initKeyboard();
-    }
-  });
+  this.showMessage('Welcome to UberQuest!');
+  this.initKeyboard();
 };
 
 Play.prototype.startMoving = function () {
@@ -351,6 +387,74 @@ Play.prototype.checkWarps = function (x, y) {
       } else {
         this.gameWorld.goPreviousLevel();
         this.loadMap(warp);
+      }
+
+      return true;
+    }
+  }
+
+  for (var index in this.npcs) {
+    var npc = this.npcs[index];
+
+    if (npc.x === x && npc.y === y) {
+      var self = this;
+      console.log('Entering npc', npc.type);
+
+      switch(npc.type) {
+        case 0:
+          this.openNPC(
+            'Hospital',
+            'Do you want to full recovery your health? <br/> <small>It will cost to you about $10</small>',
+            ['yes', 'no'],
+            function(choice) {
+              if(choice === 'yes') {
+                if(self.player.stats.money > 10) {
+                  self.player.stats.money -= 10;
+                  self.player.stats.hp = self.player.stats.maxHP;
+                  self.showMessage('Thank you!');
+                } else {
+                  self.showMessage('You need more money!');
+                }
+              }
+            }
+          );
+          break;
+        case 1:
+          this.openNPC(
+            'Armor store',
+            'Do you want to improve your armor STR+1? <br/> <small>It will cost to you about $100</small>',
+            ['yes', 'no'],
+            function(choice) {
+              if(choice === 'yes') {
+                if(self.player.stats.money > 100) {
+                  self.player.stats.money -= 100;
+                  self.player.stats.str += 1;
+                  self.showMessage('Thank you!');
+                } else {
+                  self.showMessage('You need more money!');
+                }
+              }
+            }
+          );
+          break;
+        case 2:
+          this.openNPC(
+            'Shield store',
+            'Do you want to improve your shield DEF+1? <br/> <small>It will cost to you about $100</small>',
+            ['yes', 'no'],
+            function(choice) {
+              if(choice === 'yes') {
+                if(self.player.stats.money > 100) {
+                  self.player.stats.money -= 100;
+                  self.player.stats.def += 1;
+                  self.showMessage('Thank you!');
+                } else {
+                  self.showMessage('You need more money!');
+                }
+              }
+            }
+          );
+          break;
       }
     }
   }
@@ -427,8 +531,6 @@ Play.prototype.update = function () {
   if (!this.player.sprite) {
     return;
   }
-
-  this.player.sprite.body.velocity.setTo(0, 0);
 
   if (this.timer.turn) {
     this.timer.turn = false;
