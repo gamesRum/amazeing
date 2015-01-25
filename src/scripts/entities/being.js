@@ -44,7 +44,14 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
 
 Being.prototype.damage = function(str) {
   if(this.stats.hp) {
-    this.stats.hp = this.stats.hp + this.stats.def - str;
+    var hit = (str * 2) - Math.round(this.stats.def * 0.5);
+
+    if(hit > 0) {
+      console.log('Hit!', hit);
+      this.stats.hp = this.stats.hp - hit;
+    } else {
+      console.log('Miss!');
+    }
 
     if(this.stats.hp < 0) {
       this.stats.hp = 0;
