@@ -110,6 +110,7 @@ Play.prototype.updateStats = function () {
 
 Play.prototype.hideMessage = function () {
   $messageBox.className = "hidden";
+  $optionButtons.innerHTML = '';
 };
 
 Play.prototype.showMessage = function (message, callbacks) {
@@ -142,7 +143,6 @@ Play.prototype.showMessage = function (message, callbacks) {
 Play.prototype.openNPC = function (name, message, options, callback) {
   $messageBox.className = "visible";
   $text.innerHTML = '<h1>' + name + '</h1><p>' + message + '</p>';
-  $optionButtons.innerHTML = '';
 
   if(options) {
     for(var index in options) {
@@ -175,7 +175,7 @@ Play.prototype.render = function () {
 };
 
 Play.prototype.createNpcs = function () {
-  var npcCount = Math.round(this.map.size * 0.05);
+  var npcCount = Math.round(this.map.size * 0.1);
 
   this.npcs = [];
 
