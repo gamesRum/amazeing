@@ -291,7 +291,6 @@ Play.prototype.drawMaze = function () {
   this.map.level = this.gameWorld.currentRoomIndex;
   this.map.name = this.gameWorld.room.name;
   this.map.size = this.gameWorld.room.map.size;
-  this.showMessage('Entering '+ this.map.name);
 
   map_width = (this.map.size + 1) * this.map.tile.width;
   map_height = (this.map.size + 1) * this.map.tile.height;
