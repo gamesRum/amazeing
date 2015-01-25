@@ -75,6 +75,47 @@ var tileset = {
     exit: 257,
     decoration: [224, 225, 226, 227, 240, 241, 242, 243]
   }
+},
+animations = {
+  ogre: {
+    attack: [56],
+    look_down: [56],
+    look_left: [60],
+    look_right: [64],
+    look_up: [68],
+    walk_down: [56,57,58,59],
+    walk_left: [60,61,62,63],
+    walk_right: [64,65,66,67],
+    walk_up: [68,69,70,71],
+    damage: [72,73,74,75],
+    die: [83]
+  },
+  human: {
+    attack: [4],
+    look_left: [4],
+    look_right: [8],
+    look_up: [12],
+    look_down: [0],
+    walk_down: [0, 1, 2, 3],
+    walk_left: [4, 5, 6, 7],
+    walk_right: [8, 9, 10, 11],
+    walk_up: [12, 13, 14, 15],
+    damage: [16, 17, 18, 19],
+    die: [27]
+  },
+  zombie: {
+    attack: [28],
+    look_down: [28],
+    look_left: [32],
+    look_right: [36],
+    look_up: [40],
+    walk_down: [28, 29, 30, 31],
+    walk_left: [32, 33, 34, 35],
+    walk_right: [36, 37, 38, 39],
+    walk_up: [40,41,42,43],
+    damage: [44, 45, 46, 47],
+    die: [55]
+  }
 };
 
 var $statusBar = document.getElementById('status'),
@@ -304,19 +345,22 @@ Play.prototype.loadMap = function (map) {
   this.player.sprite.position.y = this.player.location.y * this.player.height;
   this.player.sprite.bringToTop();
 
-  this.player.sprite.animations.add('look_left', [4], 1, false);
-  this.player.sprite.animations.add('look_right', [8], 1, false);
-  this.player.sprite.animations.add('look_up', [12], 1, false);
-  this.player.sprite.animations.add('look_down', [0], 1, false);
-  this.player.sprite.animations.add('walk_left', [4, 5, 6, 7], 10, true);
-  this.player.sprite.animations.add('walk_right', [8, 9, 10, 11], 10, true);
-  this.player.sprite.animations.add('walk_up', [12, 13, 14, 15], 10, true);
-  this.player.sprite.animations.add('walk_down', [0, 1, 2, 3], 10, true);
-  this.player.sprite.animations.add('damage', [16, 17, 18, 19], 10, true);
-  this.player.sprite.animations.add('attack', [20, 21, 22, 23], 10, true);
-  this.player.sprite.animations.add('die', [27], 1, false);
+  this.player.sprite.animations.add('look_left', animations[this.player.race].look_left, 1, false);
+  this.player.sprite.animations.add('look_right', animations[this.player.race].look_right, 1, false);
+  this.player.sprite.animations.add('look_up', animations[this.player.race].look_up, 1, false);
+  this.player.sprite.animations.add('look_down', animations[this.player.race].look_down, 1, false);
+
+  this.player.sprite.animations.add('walk_left', animations[this.player.race].walk_left, 10, true);
+  this.player.sprite.animations.add('walk_right', animations[this.player.race].walk_right, 10, true);
+  this.player.sprite.animations.add('walk_up', animations[this.player.race].walk_up, 10, true);
+  this.player.sprite.animations.add('walk_down', animations[this.player.race].walk_down, 10, true);
+
+  this.player.sprite.animations.add('damage', animations[this.player.race].damage, 10, true);
+  this.player.sprite.animations.add('attack', animations[this.player.race].attack, 10, true);
+  this.player.sprite.animations.add('die', animations[this.player.race].die, 1, false);
 
   this.game.camera.follow(this.player.sprite);
+  this.player.sprite.animations.play('look_down');
 
   this.drawMaze();
 };
@@ -354,15 +398,6 @@ Play.prototype.create = function () {
             def: 5
           };
           break;
-        case 'human':
-          self.player.stats = {
-            money: 100,
-            maxHP: 100,
-            hp: 10,
-            str: 2,
-            def: 2
-          };
-          break;
         case 'zombie':
           self.player.stats = {
             money: 300,
@@ -372,8 +407,18 @@ Play.prototype.create = function () {
             def: 1
           };
           break;
+        default:
+          choice = 'human';
+          self.player.stats = {
+            money: 100,
+            maxHP: 100,
+            hp: 10,
+            str: 2,
+            def: 2
+          };
       }
 
+      self.player.race = choice;
       self.showMessage('Prepare to the battle!');
       self.loadMap(self.map);
       self.initKeyboard();
