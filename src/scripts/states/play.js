@@ -269,7 +269,7 @@ Play.prototype.createMobs = function () {
       mobSprite.animations.add('damage', [0, 1, 2], 10, true);
       mobSprite.animations.add('attack', [0, 1, 2], 10, true);
 
-      this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i * j) + i, i, {
+      this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i + j) + i, i, {
         x: this.map.size,
         y: this.map.size
       }, mobSprite, this.mobs.entities, this.map.walkable));
