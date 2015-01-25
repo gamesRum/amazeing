@@ -76,6 +76,11 @@ var tileset = {
     decoration: [224, 225, 226, 227, 240, 241, 242, 243]
   }
 },
+weapons = {
+  ogre: 87,
+  human: 70,
+  zombie: 112
+},
 animations = {
   ogre: {
     attack: [56,60,64,68],
@@ -397,8 +402,16 @@ Play.prototype.loadMap = function (map) {
   this.player.sprite.animations.add('attack', animations[this.player.race].attack, 10, true);
   this.player.sprite.animations.add('die', animations[this.player.race].die, 1, false);
 
+  var weaponOffset = this.player.stats.str - 1;
+
+  if(weaponOffset > 10) {
+    weaponOffset = 10;
+  }
+
+  console.log(weaponOffset);
+
   this.sword = {};
-  this.sword.sprite = this.game.add.sprite(0, 0, 'items', 70);
+  this.sword.sprite = this.game.add.sprite(0, 0, 'items', weapons[this.player.race] + weaponOffset);
   this.sword.sprite.scale.setTo(0.7,0.7);
   this.sword.sprite.name = 'sword';
   this.sword.sprite.physicsBodyType = Phaser.Physics.ARCADE;
