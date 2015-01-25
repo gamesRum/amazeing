@@ -361,7 +361,7 @@ Play.prototype.drawMaze = function () {
       sprite: self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].background)
     };
 
-    self.map.walked[x][y].sprite.alpha = 0.5;
+    self.map.walked[x][y].sprite.alpha = 1;
     self.map.walkable[x][y] = true;
 
     switch (cell) {
