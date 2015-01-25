@@ -18,6 +18,13 @@ World.prototype.init = function(size) {
 };
 
 /*
+ * @desc returns current room level
+ */
+World.prototype.getCurrentLevel = function() {
+  return this.currentRoomIndex + 1;
+};
+
+/*
  * @desc go to the next level
  */
 World.prototype.goNextLevel = function(state) {
@@ -47,7 +54,7 @@ World.prototype.goPreviousLevel = function(state) {
  */
 World.prototype.addNewRoom = function() {
   stepBiome();
-  var newRoom = new Room('maze', 9, currentBiome).init();
+  var newRoom = new Room('maze', 19, currentBiome).init();
   this.roomsArray.push(newRoom);
 };
 

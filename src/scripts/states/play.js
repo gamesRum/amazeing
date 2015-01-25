@@ -40,8 +40,36 @@ Play.prototype.map = {
 };
 
 var tileset = {
+  cave: {
+    background: 10,
+    wall: 246,
+    enter: 403,
+    exit: 420,
+    decoration: [224, 225, 226, 227]
+  },
+  snow: {
+    background: 5,
+    wall: 246,
+    enter: 403,
+    exit: 420,
+    decoration: [224, 225, 226, 227]
+  },
+  desert: {
+    background: 9,
+    wall: 246,
+    enter: 403,
+    exit: 420,
+    decoration: [224, 225, 226, 227]
+  },
+  castle: {
+    background: 12,
+    wall: 246,
+    enter: 403,
+    exit: 420,
+    decoration: [224, 225, 226, 227]
+  },
   forest: {
-    background: 0,
+    background: 8,
     wall: 246,
     enter: 403,
     exit: 420,
@@ -87,7 +115,7 @@ Play.prototype.createMobs = function() {
   for(var i = 0; i< this.map.size; i++) {
     for(var j = 0; j< this.map.size; j++) {
       if(this.map.walkable[i][j]) {
-        if(Math.floor((Math.random() * 100) + 1) > 95) {
+        if(Math.floor((Math.random() * 100) + 1) > 98) {
           var mobBaseLevel = Math.floor((Math.random() * 3)),
               o = mobBaseLevel * 3,
               mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
@@ -116,8 +144,14 @@ Play.prototype.drawMaze = function() {
   var biome = this.gameWorld.room.biome;
   var map = this.gameWorld.room.map;
 
-  this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', 8);
+  this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', tileset[biome].background);
   this.map.walkable = map.generateEmpty(map.size);
+  this.map.level = this.gameWorld.getCurrentLevel();
+  this.map.name = this.gameWorld.room.biome + ' ' + this.map.level;
+
+  console.log('Map', map);
+  console.log('Walkable', this.map.walkable);
+  console.log('Biome', this.gameWorld.room.biome);
 
   map.iterate(function(cell, y, x) {
     self.map.walkable[x][y] = true;
@@ -130,9 +164,11 @@ Play.prototype.drawMaze = function() {
         }
         break;
       case 2:
-        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].enter);
-        self.map.warps.start.x = x;
-        self.map.warps.start.y = y;
+        if(this.map.level > 1) {
+          self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].enter);
+          self.map.warps.start.x = x;
+          self.map.warps.start.y = y;
+        }
         break;
       case 3:
         self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].exit);
@@ -247,6 +283,7 @@ Play.prototype.checkWarps = function(x, y) {
 
     if(warp.x === x && warp.y === y) {
       if(warp.level) {
+        this.gameWorld.goNextLevel();
         this.loadMap(warp);
       } else {
         console.log('You can not escape from here!');
