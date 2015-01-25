@@ -408,8 +408,6 @@ Play.prototype.loadMap = function (map) {
     weaponOffset = 10;
   }
 
-  console.log(weaponOffset);
-
   this.sword = {};
   this.sword.sprite = this.game.add.sprite(0, 0, 'items', weapons[this.player.race] + weaponOffset);
   this.sword.sprite.scale.setTo(0.7,0.7);
