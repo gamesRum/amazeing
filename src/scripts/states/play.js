@@ -522,7 +522,7 @@ Play.prototype.checkWarps = function (x, y) {
             ['yes', 'no'],
             function(choice) {
               if(choice === 'yes') {
-                if(self.player.stats.money > 100) {
+                if(self.player.stats.money >= 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.hp = self.player.stats.maxHP;
                   self.showPopup('Thank you!!!', 'hospital');
@@ -541,7 +541,7 @@ Play.prototype.checkWarps = function (x, y) {
             ['yes', 'no'],
             function(choice) {
               if(choice === 'yes') {
-                if(self.player.stats.money > 100) {
+                if(self.player.stats.money >= 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.str += 1;
                   self.showPopup('Thank you!!!', 'armor');
@@ -560,7 +560,7 @@ Play.prototype.checkWarps = function (x, y) {
             ['yes', 'no'],
             function(choice) {
               if(choice === 'yes') {
-                if(self.player.stats.money > 100) {
+                if(self.player.stats.money >= 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.def += 1;
                   self.showPopup('Thank you!!!', 'shield');
