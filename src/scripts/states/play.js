@@ -187,6 +187,7 @@ Play.prototype.showMessage = function (message, callbacks) {
 };
 
 Play.prototype.showPopup = function (message) {
+  $statusBar.style.display = 'block';
   $popupBox.className = "visible";
   $popupBox.innerHTML = '<span>' + message + '</span>';
 
@@ -473,8 +474,6 @@ Play.prototype.validCell = function (x, y) {
           animation.to({alpha: 1}, 120, Phaser.Easing.linear, true, 0, 1, false);
           animation.start();
 
-          console.log(mob.stats);
-
           if(!mob.isAlive()) {
             this.showPopup('Killed a mob. Earned $' + mob.stats.money);
           }
@@ -510,7 +509,6 @@ Play.prototype.checkWarps = function (x, y) {
 
     if (npc.x === x && npc.y === y) {
       var self = this;
-      console.log('Entering npc', npc.type);
 
       switch(npc.type) {
         case 0:

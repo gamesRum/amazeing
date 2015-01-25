@@ -54,7 +54,6 @@ Being.prototype.damage = function(str) {
       this.stats.hp = 0;
     }
 
-    console.log('Damaged:', this.name, this.stats);
     return true;
   }
 
