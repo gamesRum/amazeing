@@ -41,9 +41,22 @@ html, body
   margin 0 auto
   text-align center
   top 20%
+  opacity 0
   padding 20px
   position fixed
   width 50%
+
+  &.hidden
+    -webkit-transition: opacity 2.0s ease-in;
+    -moz-transition: opacity 2.0s ease-in;
+    -o-transition: opacity 2.0s ease-in;
+    opacity 0
+
+  &.visible
+    -webkit-transition: opacity 1.0s ease-in;
+    -moz-transition: opacity 1.0s ease-in;
+    -o-transition: opacity 1.0s ease-in;
+    opacity 1
 
   button
     background rgba(255,255,255,0.5)
@@ -51,7 +64,8 @@ html, body
     border-radius 3px
     color #000
     cursor pointer
-    display none
+    margin 0 5px
+    text-transform capitalize
 
     &:hover
       background #fff
