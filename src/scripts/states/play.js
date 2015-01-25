@@ -41,39 +41,39 @@ Play.prototype.map = {
 
 var tileset = {
   cavern: {
-    background: 10,
-    wall: 246,
+    background: 11,
+    wall: 247,
     enter: 403,
-    exit: 420,
-    decoration: [224, 225, 226, 227]
+    exit: 257,
+    decoration: [259]
   },
   snow: {
-    background: 5,
-    wall: 246,
+    background: 9,
+    wall: 239,
     enter: 403,
-    exit: 420,
-    decoration: [224, 225, 226, 227]
+    exit: 249,
+    decoration: [220, 232, 233, 235]
   },
   desert: {
-    background: 9,
-    wall: 246,
+    background: 81,
+    wall: 231,
     enter: 403,
-    exit: 420,
-    decoration: [224, 225, 226, 227]
+    exit: 421,
+    decoration: [279, 295, 308, 401]
   },
   castle: {
-    background: 12,
-    wall: 246,
+    background: 15,
+    wall: 270,
     enter: 403,
-    exit: 420,
-    decoration: [224, 225, 226, 227]
+    exit: 21,
+    decoration: [212]
   },
   forest: {
-    background: 8,
+    background: 6,
     wall: 246,
     enter: 403,
-    exit: 420,
-    decoration: [224, 225, 226, 227]
+    exit: 257,
+    decoration: [224, 225, 226, 227, 240, 241, 242, 243]
   }
 };
 
