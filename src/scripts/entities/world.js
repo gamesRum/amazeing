@@ -15,6 +15,7 @@ World.prototype.init = function(size) {
   this.roomsArray.push(newRoom);
   this.room = newRoom;
   this.currentRoomIndex = 0;
+  this.isGoingInverse = false; /* This flag */
 };
 
 /*
@@ -26,6 +27,7 @@ World.prototype.goNextLevel = function(state) {
     this.addNewRoom();
   }
   this.room = this.roomsArray[this.currentRoomIndex];
+  this.isGoingInverse = false;
   return true;
 };
 
@@ -36,6 +38,7 @@ World.prototype.goNextLevel = function(state) {
 World.prototype.goPreviousLevel = function(state) {
   this.room.saveState(state);
   if (0 <= this.currentRoomIndex - 1) {
+    this.isGoingInverse = true;
     this.room = this.roomsArray[--this.currentRoomIndex];
     return true;
   }

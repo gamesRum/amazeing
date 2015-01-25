@@ -22,8 +22,8 @@ Mapa.prototype.generate = function() {
  * @desc get player spawn point
  * @return object {row, column} - coordinates
  */
-Mapa.prototype.getPlayerSpawnPoint = function() {
-  return this.enter;
+Mapa.prototype.getPlayerSpawnPoint = function(getExit) {
+  return getExit ? this.exit : this.enter;
 };
 
 /*

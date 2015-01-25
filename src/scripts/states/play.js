@@ -189,7 +189,7 @@ Play.prototype.drawMaze = function () {
 
   this.createMobs();
 
-  var spawnPoint = map.getPlayerSpawnPoint();
+  var spawnPoint = map.getPlayerSpawnPoint(this.gameWorld.isGoingInverse);
   this.player.sprite.position.x = spawnPoint.column * self.map.tile.width;
   this.player.sprite.position.y = spawnPoint.row * self.map.tile.height;
   this.player.location.x = spawnPoint.column;

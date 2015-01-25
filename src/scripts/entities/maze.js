@@ -109,6 +109,10 @@ Maze.prototype.addDoors = function() {
     row: enter.row,
     column: enter.column
   };
+  this.exit = {
+    row: exit.row,
+    column: exit.column
+  };
 
   this.map[enter.row][enter.column] = tiles.enter;
   this.map[exit.row][exit.column] = tiles.exit;
