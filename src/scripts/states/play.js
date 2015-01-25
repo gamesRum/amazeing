@@ -727,7 +727,7 @@ Play.prototype.update = function() {
         this.sword.sprite.body.offset.y = -34;
       } else if (this.player.orientation === 'right') {
         this.sword.sprite.angle = 135;
-        this.sword.sprite.position.x = this.player.sprite.position.x + 40;
+        this.sword.sprite.position.x = this.player.sprite.position.x + 48;
         this.sword.sprite.position.y = this.player.sprite.position.y + 24;
         this.sword.sprite.body.offset.x = -34;
         this.sword.sprite.body.offset.y = -20;
