@@ -302,10 +302,13 @@ Play.prototype.createMobs = function () {
       mobSprite.animations.add('damage', [0, 1, 2], 10, true);
       mobSprite.animations.add('attack', [0, 1, 2], 10, true);
 
-      this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i + j) + i, i, {
+      var newMob = new Mob(mobID++, this.game, this.player, i, j, (i + j) + i, i, {
         x: this.map.size,
         y: this.map.size
-      }, mobSprite, this.mobs.entities, this.map.walkable));
+      }, mobSprite, this.mobs.entities, this.map.walkable);
+      this.mobs.entities.push(newMob);
+
+      mobSprite.customMoney = newMob.stats.money;
 
       mobCount--;
     }
@@ -677,7 +680,7 @@ Play.prototype.update = function() {
     }, 400);
 
     if (!mob.alive) {
-      self.player.stats.money += 100;
+      self.player.stats.money += mob.customMoney;
     }
 
   }, null, this);
