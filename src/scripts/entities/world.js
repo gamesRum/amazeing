@@ -7,11 +7,12 @@ var World = module.exports = function() {
   this.roomsArray = [];
   this.room = null;
   this.currentRoomIndex = 0;
+  this.currentLevel = 1;
 };
 
-World.prototype.init = function(size) {
-  size = size || 15;
-  var newRoom = new Room('maze', size).init();
+World.prototype.init = function() {
+  this.currentLevel = 1;
+  var newRoom = new Room('maze', this.getMapSize()).init();
   this.roomsArray.push(newRoom);
   this.room = newRoom;
   this.currentRoomIndex = 0;
@@ -50,13 +51,32 @@ World.prototype.goPreviousLevel = function(state) {
  */
 World.prototype.addNewRoom = function() {
   stepBiome();
-  var newRoom = new Room('maze', 9, currentBiome).init();
+  var newRoom = new Room('maze', this.getMapSize(), currentBiome).init();
   this.roomsArray.push(newRoom);
 };
 
 World.prototype.getPlayerSpawnPoint = function() {
   return this.room.map.getPlayerSpawnPoint();
 };
+
+/*
+ * @desc get map size for given level
+ * @return int - map size
+ */
+World.prototype.getMapSize = function() {
+  return fibonacci(this.currentLevel);
+};
+
+var fibonacci = (function(Math) {
+  var sqrt5 = Math.sqrt(5),
+    lnphi = Math.log(1 + sqrt5) - Math.LN2,
+    exp = Math.exp,
+    round = Math.round;
+
+  return function(n) {
+    return n <= 7 ? n && 15 : round(exp(lnphi * n) / sqrt5);
+  };
+})(Math);
 
 var previousBiome = null;
 var currentBiome = 'forest';
