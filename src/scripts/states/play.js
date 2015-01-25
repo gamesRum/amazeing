@@ -619,24 +619,24 @@ Play.prototype.checkWarps = function (x, y) {
 };
 
 Play.prototype.calculateFOV = function () {
-  var self= this;
-  function watch(x, y) {
-    var cell = self.map.walked[x][y];
-
-    if(cell){
-      cell.seen = true;
-      cell.sprite.alpha = 1;
-    }
-  }
-
-  var x = this.player.location.x,
-    y = this.player.location.y;
-
-  watch(x, y);
-  watch(x, y+1);
-  watch(x, y-1);
-  watch(x+1, y);
-  watch(x-1, y);
+  //var self= this;
+  //function watch(x, y) {
+  //  var cell = self.map.walked[x][y];
+  //
+  //  if(cell && x < self.map.size && y < self.map.size){
+  //    cell.seen = true;
+  //    cell.sprite.alpha = 1;
+  //  }
+  //}
+  //
+  //var x = this.player.location.x,
+  //  y = this.player.location.y;
+  //
+  //watch(x, y);
+  //watch(x, y+1);
+  //watch(x, y-1);
+  //watch(x+1, y);
+  //watch(x-1, y);
 };
 
 Play.prototype.movePlayer = function (left, top, action) {
