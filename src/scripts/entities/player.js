@@ -17,6 +17,15 @@ Player.prototype.update = function() {
 };
 
 Player.prototype.attack = function(entity) {
-  console.log('Attacking:', entity);
-  return entity.damage(this.stats.str);
+
+  if(entity.damage(this.stats.str)) {
+    console.log('Attacking:', entity);
+
+    if(!entity.isAlive()) {
+      console.log('You have killed an ', entity.name, ', earned $', entity.stats.money);
+      this.stats.money += entity.stats.money;
+    }
+  }
+
+  return false;
 };
