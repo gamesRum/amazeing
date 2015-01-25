@@ -47,10 +47,7 @@ Being.prototype.damage = function(str) {
     var hit = (str * 2) - Math.round(this.stats.def * 0.5);
 
     if(hit > 0) {
-      console.log('Hit!', hit);
       this.stats.hp = this.stats.hp - hit;
-    } else {
-      console.log('Miss!');
     }
 
     if(this.stats.hp < 0) {

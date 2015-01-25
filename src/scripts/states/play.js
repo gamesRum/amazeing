@@ -120,6 +120,7 @@ animations = {
 
 var $statusBar = document.getElementById('status'),
     $messageBox = document.getElementById('messageBox'),
+    $popupBox = document.getElementById('popupBox'),
     $text = document.getElementById('messageText'),
     $optionButtons = document.getElementById('optionButtons'),
     $buttons = {
@@ -149,8 +150,12 @@ Play.prototype.updateStats = function () {
   addText('$', this.player.stats.money);
 };
 
-Play.prototype.hideMessage = function () {
-  $messageBox.className = "hidden";
+Play.prototype.hideMessage = function ($element) {
+  if(!$element) {
+    $element = $messageBox;
+  }
+
+  $element.className = "hidden";
 };
 
 Play.prototype.showMessage = function (message, callbacks) {
@@ -179,6 +184,16 @@ Play.prototype.showMessage = function (message, callbacks) {
       self.hideMessage()
     }, 3000);
   }
+};
+
+Play.prototype.showPopup = function (message) {
+  $popupBox.className = "visible";
+  $popupBox.innerHTML = '<span>' + message + '</span>';
+
+  var self = this;
+  setTimeout(function () {
+    self.hideMessage($popupBox);
+  }, 2000);
 };
 
 Play.prototype.openNPC = function (name, message, options, callback) {
@@ -291,6 +306,8 @@ Play.prototype.drawMaze = function () {
   this.map.level = this.gameWorld.currentRoomIndex;
   this.map.name = this.gameWorld.room.name;
   this.map.size = this.gameWorld.room.map.size;
+
+  this.showPopup('Entering ' + this.map.name);
 
   map_width = (this.map.size + 1) * this.map.tile.width;
   map_height = (this.map.size + 1) * this.map.tile.height;
@@ -450,6 +467,12 @@ Play.prototype.validCell = function (x, y) {
           animation.to({alpha: 0.5}, 120, Phaser.Easing.linear, true, 0, 1, false);
           animation.to({alpha: 1}, 120, Phaser.Easing.linear, true, 0, 1, false);
           animation.start();
+
+          console.log(mob.stats);
+
+          if(!mob.isAlive()) {
+            this.showPopup('Killed a mob. Earned $' + mob.stats.money);
+          }
         }
       }
 
@@ -495,8 +518,9 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.hp = self.player.stats.maxHP;
+                  self.showPopup('Thank you!!!');
                 } else {
-                  self.showMessage('You need more money!');
+                  self.showPopup('You need more money!!!');
                 }
               }
             }
@@ -512,8 +536,9 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.str += 1;
+                  self.showPopup('Thank you!!!');
                 } else {
-                  self.showMessage('You need more money!');
+                  self.showPopup('You need more money!!!');
                 }
               }
             }
@@ -529,8 +554,9 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.def += 1;
+                  self.showPopup('Thank you!!!');
                 } else {
-                  self.showMessage('You need more money!');
+                  self.showPopup('You need more money!!!');
                 }
               }
             }

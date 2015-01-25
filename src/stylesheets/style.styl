@@ -12,7 +12,6 @@ html, body
   display block
 
 #status
-  top 0
   color #ccc
   display block
   font-size 11px
@@ -20,6 +19,7 @@ html, body
   padding 5px 10px
   position fixed
   width 100%
+  top 0
 
   span
     background rgba(0,0,0,0.5)
@@ -30,6 +30,39 @@ html, body
 
     strong
       color #fff
+
+#popupBox
+  bottom 0
+  color #ccc
+  display block
+  font-size: 18px
+  left 0
+  opacity 0
+  padding 20px 10px
+  position fixed
+  width 100%
+
+  span
+    background rgba(255,255,255,0.8)
+    border-radius 3px
+    color #000
+    line-height 20px
+    padding 10px
+
+    strong
+      color #fff
+
+  &.hidden
+    -webkit-transition: opacity 0.5s ease-in;
+    -moz-transition: opacity 0.5s ease-in;
+    -o-transition: opacity 0.5s ease-in;
+    opacity 0
+
+  &.visible
+    -webkit-transition: opacity 0.5s ease-in;
+    -moz-transition: opacity 0.5s ease-in;
+    -o-transition: opacity 0.5s ease-in;
+    opacity 1
 
 #messageBox
   background rgba(0,0,0,0.5)
