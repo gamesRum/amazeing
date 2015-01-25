@@ -247,7 +247,7 @@ Play.prototype.createNpcs = function () {
 };
 
 Play.prototype.createMobs = function () {
-  var mobCount = Math.round(this.map.size * 0.3),
+  var mobCount = Math.round(this.map.size * 0.5),
       mobID = 0;
 
   this.mobs = this.game.add.group();
