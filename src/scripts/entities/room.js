@@ -1,17 +1,20 @@
 'use strict';
 
 var Cave = require('./cave'),
-  Maze = require('./maze');
+  Maze = require('./maze'),
+  utils = require('../utils');
 
 var Room = module.exports = function(type, size, biome) {
   this.type = type || 'maze';
-  this.size = size || 65;
+  this.size = size || 15;
   this.biome = biome || 'forest';
   this.state = null;
   this.map = null;
+  this.name = null;
 };
 
 Room.prototype.init = function() {
+  this.name = utils.generateRandomName() + ' (' + this.biome + ')';
   this.map = this.type === 'maze' ? new Maze(this.size) : new Cave(this.size);
   this.map.generate();
   return this;
