@@ -140,19 +140,19 @@ Play.prototype.createMobs = function () {
 
 Play.prototype.drawMaze = function () {
   var self = this,
-    map_width = (this.map.size + 1) * this.map.tile.width,
-    map_height = (this.map.size + 1) * this.map.tile.height;
+      biome = this.gameWorld.room.biome,
+      map = this.gameWorld.room.map,
+      map_width = 0,
+      map_height = 0;
 
-  this.game.world.setBounds(0, 0, map_width, map_height);
-
-  var biome = this.gameWorld.room.biome;
-  var map = this.gameWorld.room.map;
-
-  this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', tileset[biome].background);
   this.map.walkable = map.generateEmpty(map.size);
   this.map.level = this.gameWorld.currentRoomIndex;
   this.map.name = this.gameWorld.room.name;
   this.map.size = this.gameWorld.room.map.size;
+  map_width = (this.map.size + 1) * this.map.tile.width;
+  map_height = (this.map.size + 1) * this.map.tile.height;
+  this.game.world.setBounds(0, 0, map_width, map_height);
+  this.game.add.tileSprite(0, 0, map_width, map_height, 'tiles', tileset[biome].background);
 
   map.iterate(function (cell, y, x) {
     self.map.walkable[x][y] = true;
