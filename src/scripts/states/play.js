@@ -234,6 +234,11 @@ Play.prototype.openNPC = function (name, message, options, callback) {
 Play.prototype.render = function () {
   this.game.time.advancedTiming = true;
   this.game.debug.text(this.game.time.fps || '--', window.innerWidth - 40, window.innerHeight - 10, "#ffffff");
+  if (this.sword && this.sword.sprite) {
+    this.game.debug.spriteInfo(this.sword.sprite, 32, 32);
+    this.game.debug.body(this.sword.sprite);
+    this.game.debug.body(this.mobs);
+  }
   this.updateStats();
 };
 
@@ -272,6 +277,8 @@ Play.prototype.createMobs = function () {
       mobID = 0;
 
   this.mobs = this.game.add.group();
+  this.mobs.enableBody = true;
+  this.mobs.physicsBodyType = Phaser.Physics.ARCADE;
   this.mobs.entities = [];
 
   while(mobCount > 0) {
@@ -283,6 +290,11 @@ Play.prototype.createMobs = function () {
         o = mobBaseLevel * 3,
         mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
 
+      mobSprite.health = Math.round(2.5 * mobBaseLevel);
+      mobSprite.customDefense = Math.round(1.2 * mobBaseLevel);
+      mobSprite.customGodMode = false;
+
+      mobSprite.body.immovable = true;
       mobSprite.animations.add('walk_left', [12 + o, 13 + o, 14 + o], 10, true);
       mobSprite.animations.add('walk_right', [24 + o, 25 + o, 26 + o], 10, true);
       mobSprite.animations.add('walk_up', [36 + o, 37 + o, 38 + o], 10, true);
@@ -359,6 +371,7 @@ Play.prototype.drawMaze = function () {
   this.player.location.x = spawnPoint.column;
   this.player.location.y = spawnPoint.row;
   this.player.sprite.bringToTop();
+  this.sword.sprite.bringToTop();
 };
 
 Play.prototype.loadMap = function (map) {
@@ -381,6 +394,12 @@ Play.prototype.loadMap = function (map) {
   this.player.sprite.animations.add('attack', animations[this.player.race].attack, 10, true);
   this.player.sprite.animations.add('die', animations[this.player.race].die, 1, false);
 
+  this.sword = {};
+  this.sword.sprite = this.game.add.sprite(-34, -34, 'items', 70);
+  this.sword.sprite.name = 'sword';
+  this.sword.sprite.physicsBodyType = Phaser.Physics.ARCADE;
+  this.sword.sprite.exists = false;
+
   this.game.camera.follow(this.player.sprite);
   this.player.sprite.animations.play('look_down');
 
@@ -401,9 +420,16 @@ Play.prototype.create = function () {
     turn: true
   };
 
+  this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
   this.gameWorld.init();
   this.game.stage.disableVisibilityChange = true;
   this.game.stage.backgroundColor = 0x222222;
+
+  this.textGroup = this.game.add.group();
+
+  //this.game.add.tween(textGroup.scale).to( { x: 0.5, y: 0.5 }, 2000, Phaser.Easing.Linear.None, true, 0, Number.MAX_VALUE, true);
+  this.game.add.tween(this.textGroup.scale).to({ x: 0.5, y: 0.5 },2000,Phaser.Easing.Linear.None,true);
 
   this.openNPC(
     'Welcome to UberQuest!',
@@ -460,30 +486,6 @@ Play.prototype.validCell = function (x, y) {
   if (!this.map.walkable[x][y]) {
     return false;
   }
-
-  for (var index in this.mobs.entities) {
-    var mob = this.mobs.entities[index];
-
-    if (mob.location.x === x && mob.location.y === y) {
-
-      if (this.keys.spaceBar.isDown) {
-        if (this.player.attack(mob)) {
-          var animation = this.game.add.tween(mob.sprite);
-
-          animation.to({alpha: 0.5}, 120, Phaser.Easing.linear, true, 0, 1, false);
-          animation.to({alpha: 1}, 120, Phaser.Easing.linear, true, 0, 1, false);
-          animation.start();
-
-          if(!mob.isAlive()) {
-            this.showPopup('Killed a mob. Earned $' + mob.stats.money);
-          }
-        }
-      }
-
-      return false;
-    }
-  }
-
   return true;
 };
 
@@ -624,7 +626,7 @@ Play.prototype.timerTick = function () {
   for (var index in this.mobs.entities) {
     var mob = this.mobs.entities[index];
 
-    if (mob.isAlive()) {
+    if (mob.isAlive() && mob.sprite.alive) {
       mob.chooseNextMove();
     } else {
       var textureModifier = Math.floor(Math.random() * 2) + 1;
@@ -637,16 +639,48 @@ Play.prototype.timerTick = function () {
   this.timer.turn = true;
 };
 
-Play.prototype.update = function () {
+Play.prototype.update = function() {
+  var self = this;
+
   if (!this.player.sprite) {
     return;
   }
 
+  this.game.physics.arcade.overlap(this.sword.sprite, this.mobs, function(sword, mob) {
+    if (mob.customGodMode || !mob.alive) {
+      return;
+    }
+    mob.customGodMode = true;
+
+    var pointsPerDefense = Math.round(mob.customDefense * 0.5) || 0;
+    var damage = (self.player.stats.str * 2) - pointsPerDefense;
+    mob.damage(damage || 0);
+
+    var damageText = self.game.add.text(mob.position.x, mob.position.y, '-' + damage, {
+      font: "bold 20px Arial",
+      fill: "#ff0044",
+      align: "center"
+    });
+
+    self.game.time.events.add(100, function() {
+      self.game.add.tween(damageText).to({y: 0}, 1500, Phaser.Easing.Linear.None, true);
+      self.game.add.tween(damageText).to({alpha: 0}, 300, Phaser.Easing.Linear.None, true);
+    }, self);
+
+    setTimeout(function() {
+      mob.customGodMode = false;
+    }, 400);
+
+    if (!mob.alive) {
+      self.player.stats.money += 100;
+    }
+
+  }, null, this);
+
   if (this.timer.turn) {
     this.timer.turn = false;
-    var self = this;
-    setTimeout(function () {
-      self.timerTick()
+    setTimeout(function() {
+      self.timerTick();
     }, 200);
   }
 
@@ -659,8 +693,50 @@ Play.prototype.update = function () {
     });
   }
 
-  if (!this.player.moving && this.player.isAlive()) {
+  if (!this.player.moving && this.player.isAlive() && !this.player.isAttacking) {
     this.game.input.update();
+
+    if (this.keys.spaceBar.isDown && !this.player.isAttacking) {
+      this.player.isAttacking = true;
+      this.movePlayer(0, 0, 'attack');
+
+      this.sword.sprite.exists = true;
+      this.game.physics.enable(this.sword.sprite, Phaser.Physics.ARCADE);
+      this.sword.sprite.bringToTop();
+
+      if (this.player.orientation === 'up') {
+        this.sword.sprite.angle = 45;
+        this.sword.sprite.position.x = this.player.sprite.position.x + 16;
+        this.sword.sprite.position.y = this.player.sprite.position.y - 32;
+        this.sword.sprite.body.offset.x = -18;
+        this.sword.sprite.body.offset.y = 0;
+        this.player.sprite.bringToTop();
+      } else if (this.player.orientation === 'down') {
+        this.sword.sprite.angle = -135;
+        this.sword.sprite.position.x = this.player.sprite.position.x + 16;
+        this.sword.sprite.position.y = this.player.sprite.position.y + 64;
+        this.sword.sprite.body.offset.x = -18;
+        this.sword.sprite.body.offset.y = -34;
+      } else if (this.player.orientation === 'right') {
+        this.sword.sprite.angle = 135;
+        this.sword.sprite.position.x = this.player.sprite.position.x + 60;
+        this.sword.sprite.position.y = this.player.sprite.position.y + 20;
+        this.sword.sprite.body.offset.x = -34;
+        this.sword.sprite.body.offset.y = -20;
+      } else {
+        this.sword.sprite.angle = -45;
+        this.sword.sprite.position.x = this.player.sprite.position.x - 28;
+        this.sword.sprite.position.y = this.player.sprite.position.y + 20;
+        this.sword.sprite.body.offset.x = 0;
+        this.sword.sprite.body.offset.y = -20;
+      }
+
+      setTimeout(function() {
+        self.player.isAttacking = false;
+        self.sword.sprite.exists = false;
+      }, 400);
+      return;
+    }
 
     if (this.cursors.down.isDown) {
       this.movePlayer(0, 1);
@@ -676,15 +752,10 @@ Play.prototype.update = function () {
       this.player.orientation = 'right';
     }
 
-    if(this.player.moving) {
-      this.player.sprite.animations.play('walk_'+this.player.orientation);
+    if (this.player.moving) {
+      this.player.sprite.animations.play('walk_' + this.player.orientation);
     } else {
-      this.player.sprite.animations.play('look_'+this.player.orientation);
-    }
-
-    if (this.keys.spaceBar.isDown) {
-      this.movePlayer(0, 0, 'attack');
-      this.player.sprite.animations.play('attack');
+      this.player.sprite.animations.play('look_' + this.player.orientation);
     }
   }
 };
