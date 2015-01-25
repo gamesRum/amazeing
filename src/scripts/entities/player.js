@@ -5,6 +5,7 @@ var Being = require('./being');
 var Player = module.exports = function(hp, name, genre) {
   Being.call(this);
   this.stats.hp = hp;
+  this.race = 'human';
   this.name = name;
   this.genre = genre;
   this.orientation = null;
