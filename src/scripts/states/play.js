@@ -267,7 +267,7 @@ Play.prototype.loadMap = function (map) {
   this.player.sprite.animations.add('walk_down', [0, 1, 2, 3], 10, true);
   this.player.sprite.animations.add('damage', [16, 17, 18, 19], 10, true);
   this.player.sprite.animations.add('attack', [20, 21, 22, 23], 10, true);
-  this.player.sprite.animations.add('die', [24, 25, 26, 27], 1, false);
+  this.player.sprite.animations.add('die', [27], 1, false);
 
   this.drawMaze();
 };
