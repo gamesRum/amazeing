@@ -110,12 +110,12 @@ Play.prototype.updateStats = function () {
 
 Play.prototype.hideMessage = function () {
   $messageBox.className = "hidden";
-  $optionButtons.innerHTML = '';
 };
 
 Play.prototype.showMessage = function (message, callbacks) {
   $messageBox.className = "visible";
   $text.innerHTML = message;
+  $optionButtons.innerHTML = '';
 
   function setButton($element, callback) {
     if(callback) {
@@ -143,6 +143,7 @@ Play.prototype.showMessage = function (message, callbacks) {
 Play.prototype.openNPC = function (name, message, options, callback) {
   $messageBox.className = "visible";
   $text.innerHTML = '<h1>' + name + '</h1><p>' + message + '</p>';
+  $optionButtons.innerHTML = '';
 
   if(options) {
     for(var index in options) {
