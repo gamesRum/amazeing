@@ -149,7 +149,7 @@ Play.prototype.updateStats = function () {
     $statusBar.appendChild($span);
   }
 
-  addText('Map', this.map.name);
+  addText('Map', this.map.name + ' ( deep: ' + (this.gameWorld.currentRoomIndex + 1) + ' )');
   addText('HP', this.player.stats.hp);
   addText('STR', this.player.stats.str);
   addText('DEF', this.player.stats.def);

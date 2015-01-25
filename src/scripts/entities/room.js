@@ -14,7 +14,7 @@ var Room = module.exports = function(type, size, biome) {
 };
 
 Room.prototype.init = function() {
-  this.name = utils.generateRandomName() + ' (' + this.biome + ')';
+  this.name = utils.generateRandomName();
   this.map = this.type === 'maze' ? new Maze(this.size) : new Cave(this.size);
   this.map.generate();
   return this;
