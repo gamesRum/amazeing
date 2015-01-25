@@ -404,12 +404,12 @@ Play.prototype.checkWarps = function (x, y) {
         case 0:
           this.openNPC(
             'Hospital',
-            'Do you want to full recovery your health? <br/> <small>It will cost to you about $10</small>',
+            'Do you want to get healthy? <br/> <small>It will cost to you about $100</small>',
             ['yes', 'no'],
             function(choice) {
               if(choice === 'yes') {
-                if(self.player.stats.money > 10) {
-                  self.player.stats.money -= 10;
+                if(self.player.stats.money > 100) {
+                  self.player.stats.money -= 100;
                   self.player.stats.hp = self.player.stats.maxHP;
                   self.showMessage('Thank you!');
                 } else {
