@@ -14,7 +14,8 @@ var Player = require('../entities/player');
 var Mob = require('../entities/mob');
 
 Play.prototype.map = {
-  level: null,
+  level: 1,
+  name: 'The Forest',
   size: 19,
   tile: {
     height: 32,
@@ -23,11 +24,14 @@ Play.prototype.map = {
   walkable: null,
   warps: {
     start: {
+      level: null,
       id: 'start',
       x: 0,
       y: 0
     },
     end: {
+      level: 2,
+      name: 'The Forest',
       id: 'end',
       x: 0,
       y: 0
@@ -57,6 +61,7 @@ Play.prototype.updateStats = function() {
     statusBar.appendChild(span);
   }
 
+  addText('Map', this.map.name + ' - ' + this.map.level);
   addText('Level', this.player.stats.level);
   addText('HP', this.player.stats.hp);
   addText('SP', this.player.stats.sp);
@@ -153,16 +158,10 @@ Play.prototype.drawMaze = function() {
   this.player.sprite.bringToTop();
 };
 
-Play.prototype.create = function() {
-  this.timer = {
-    turn: true
-  };
-
-  /* Game World */
-  this.gameWorld.init(this.map.size);
-
-  this.game.physics.startSystem(Phaser.Physics.ARCADE);
-  this.game.stage.disableVisibilityChange = true;
+Play.prototype.loadMap = function(map) {
+  console.log('Entering:', map.name + ' - ' + map.level);
+  this.map.name = map.name;
+  this.map.level = map.level;
 
   this.walls = this.game.add.group();
   this.walls.enableBody = true;
@@ -185,6 +184,20 @@ Play.prototype.create = function() {
   this.player.sprite.animations.add('attack', [20,21,22,23], 10, true);
 
   this.drawMaze();
+};
+
+Play.prototype.create = function() {
+  this.timer = {
+    turn: true
+  };
+
+  /* Game World */
+  this.gameWorld.init(this.map.size);
+
+  this.game.physics.startSystem(Phaser.Physics.ARCADE);
+  this.game.stage.disableVisibilityChange = true;
+
+  this.loadMap(this.map);
 
   this.cursors = this.game.input.keyboard.createCursorKeys();
   this.keys = {
@@ -233,10 +246,11 @@ Play.prototype.checkWarps = function(x, y) {
     var warp = this.map.warps[index];
 
     if(warp.x === x && warp.y === y) {
-      console.log('Warp reached!', warp.id);
-      // this.gameWorld.goNextLevel();
-      // this.drawMaze();
-      // TODO: we should load a new map, depending on warp.id!!!
+      if(warp.level) {
+        this.loadMap(warp);
+      } else {
+        console.log('You can not escape from here!');
+      }
     }
   }
 };
@@ -271,7 +285,6 @@ Play.prototype.movePlayer = function(left, top, action) {
     this.player.moving = false;
     this.player.location = locationBackup;
   } else {
-    this.checkWarps(this.player.location.x, this.player.location.y);
 
     var animation = this.game.add.tween(this.player.sprite).to(
       {
@@ -286,8 +299,7 @@ Play.prototype.movePlayer = function(left, top, action) {
 
     switch(action) {
       case 'attack':
-        console.log('attack!');
-        // trigger some magic!
+        this.checkWarps(this.player.location.x, this.player.location.y);
         break;
     }
   }
@@ -311,6 +323,10 @@ Play.prototype.timerTick = function() {
 };
 
 Play.prototype.update = function() {
+  if(!this.player.sprite) {
+    return;
+  }
+
   this.player.sprite.body.velocity.setTo(0, 0);
 
   if(this.timer.turn) {
