@@ -633,8 +633,9 @@ Play.prototype.timerTick = function () {
       mob.chooseNextMove();
     } else {
       var textureModifier = Math.floor(Math.random() * 2) + 1;
-      this.mobs.create(mob.location.x * this.map.tile.width, mob.location.y * this.map.tile.width, 'tiles', 240 + textureModifier);
+      var newMob = this.mobs.create(mob.location.x * this.map.tile.width, mob.location.y * this.map.tile.width, 'tiles', 240 + textureModifier);
       this.mobs.entities.splice(index, 1);
+      newMob.customDeath = true;
       mob.sprite.parent.remove(mob.sprite);
     }
   }
@@ -650,7 +651,7 @@ Play.prototype.update = function() {
   }
 
   this.game.physics.arcade.overlap(this.sword.sprite, this.mobs, function(sword, mob) {
-    if (mob.customGodMode || !mob.alive) {
+    if (mob.customGodMode || !mob.alive || mob.customDeath) {
       return;
     }
     mob.customGodMode = true;
