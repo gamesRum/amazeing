@@ -80,7 +80,7 @@ var tileset = {
 Play.prototype.player = new Player(20, 'joan', 'male');
 
 Play.prototype.updateStats = function () {
-  var statusBar = document.getElementById("status");
+  var statusBar = document.getElementById('status');
   statusBar.innerHTML = '';
 
   function addText(label, value) {
@@ -90,9 +90,7 @@ Play.prototype.updateStats = function () {
   }
 
   addText('Map', this.map.name);
-  addText('Level', this.player.stats.level);
   addText('HP', this.player.stats.hp);
-  addText('SP', this.player.stats.sp);
   addText('STR', this.player.stats.str);
   addText('DEF', this.player.stats.def);
   addText('$', this.player.stats.money);
