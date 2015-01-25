@@ -242,8 +242,8 @@ Play.prototype.openNPC = function (name, message, options, callback) {
 };
 
 Play.prototype.render = function () {
-  this.game.time.advancedTiming = true;
-  this.game.debug.text(this.game.time.fps || '--', window.innerWidth - 40, window.innerHeight - 10, "#ffffff");
+  //this.game.time.advancedTiming = true;
+  //this.game.debug.text(this.game.time.fps || '--', window.innerWidth - 40, window.innerHeight - 10, "#ffffff");
   this.updateStats();
 };
 
@@ -471,11 +471,8 @@ Play.prototype.create = function () {
 
   this.textGroup = this.game.add.group();
 
-  //this.game.add.tween(textGroup.scale).to( { x: 0.5, y: 0.5 }, 2000, Phaser.Easing.Linear.None, true, 0, Number.MAX_VALUE, true);
-  this.game.add.tween(this.textGroup.scale).to({ x: 0.5, y: 0.5 },2000,Phaser.Easing.Linear.None,true);
-
   this.openNPC(
-    'Welcome to UberQuest!',
+    'Welcome & Don\'t Die!',
     'Select your race: <br/> <small>Every race has its own bonus and maybe it has money!</small>',
     ['ogre', 'human', 'zombie'],
     function(choice) {
@@ -510,7 +507,7 @@ Play.prototype.create = function () {
       }
 
       self.player.race = choice;
-      self.showMessage('Prepare to the battle!');
+      self.showMessage('Prepare for battle!');
       self.loadMap(self.map);
       self.initKeyboard();
     }
@@ -560,12 +557,12 @@ Play.prototype.checkWarps = function (x, y) {
           self.showPopup('Hello, darling!!!', 'hospital');
           this.openNPC(
             'Hospital',
-            'Do you want to get healthy? <br/> <small>It will cost to you about $100</small>',
+            'Do you want to get healthy? <br/> <small>It will cost you $50</small>',
             ['yes', 'no'],
             function(choice) {
               if(choice === 'yes') {
-                if(self.player.stats.money >= 100) {
-                  self.player.stats.money -= 100;
+                if(self.player.stats.money >= 50) {
+                  self.player.stats.money -= 50;
                   self.player.stats.hp = self.player.stats.maxHP;
                   self.showPopup('Thank you!!!', 'hospital');
                 } else {
@@ -579,7 +576,7 @@ Play.prototype.checkWarps = function (x, y) {
           self.showPopup('Welcome, foreigner!!!', 'armor');
           this.openNPC(
             'Armor store',
-            'Do you want to improve your armor STR+1? <br/> <small>It will cost to you about $100</small>',
+            'Do you want to improve your armor STR+1? <br/> <small>It will cost you $100</small>',
             ['yes', 'no'],
             function(choice) {
               if(choice === 'yes') {
@@ -598,7 +595,7 @@ Play.prototype.checkWarps = function (x, y) {
           self.showPopup('Are you looking for adventure?', 'shield');
           this.openNPC(
             'Shield store',
-            'Do you want to improve your shield DEF+1? <br/> <small>It will cost to you about $100</small>',
+            'Do you want to improve your shield DEF+1? <br/> <small>It will cost you $100</small>',
             ['yes', 'no'],
             function(choice) {
               if(choice === 'yes') {
@@ -759,7 +756,7 @@ Play.prototype.update = function() {
 
   if (!this.player.isAlive()) {
     this.player.sprite.animations.play('die');
-    this.showMessage('GAME OVER!', {
+    this.showMessage('You are weak. You were slain!', {
       accept: function() {
         window.location.reload();
       }
