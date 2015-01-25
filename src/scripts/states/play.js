@@ -322,8 +322,6 @@ Play.prototype.loadMap = function (map) {
 };
 
 Play.prototype.initKeyboard = function() {
-  this.loadMap(this.map);
-
   this.cursors = this.game.input.keyboard.createCursorKeys();
   this.keys = {
     spaceBar: this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
@@ -332,17 +330,55 @@ Play.prototype.initKeyboard = function() {
 };
 
 Play.prototype.create = function () {
+  var self = this;
   this.timer = {
     turn: true
   };
 
   this.gameWorld.init();
-
   this.game.stage.disableVisibilityChange = true;
   this.game.stage.backgroundColor = 0x222222;
 
-  this.showMessage('Welcome to UberQuest!');
-  this.initKeyboard();
+  this.openNPC(
+    'Welcome to UberQuest!',
+    'Select your race: <br/> <small>Every race has its own bonus and maybe it has money!</small>',
+    ['ogre', 'human', 'zombie'],
+    function(choice) {
+      switch(choice) {
+        case 'ogre':
+          self.player.stats = {
+            money: 0,
+            maxHP: 100,
+            hp: 5,
+            str: 5,
+            def: 5
+          };
+          break;
+        case 'human':
+          self.player.stats = {
+            money: 100,
+            maxHP: 100,
+            hp: 10,
+            str: 2,
+            def: 2
+          };
+          break;
+        case 'zombie':
+          self.player.stats = {
+            money: 300,
+            maxHP: 50,
+            hp: 1,
+            str: 1,
+            def: 1
+          };
+          break;
+      }
+
+      self.showMessage('Prepare to the battle!');
+      self.loadMap(self.map);
+      self.initKeyboard();
+    }
+  );
 };
 
 Play.prototype.startMoving = function () {
