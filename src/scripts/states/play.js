@@ -234,11 +234,6 @@ Play.prototype.openNPC = function (name, message, options, callback) {
 Play.prototype.render = function () {
   this.game.time.advancedTiming = true;
   this.game.debug.text(this.game.time.fps || '--', window.innerWidth - 40, window.innerHeight - 10, "#ffffff");
-  if (this.sword && this.sword.sprite) {
-    this.game.debug.spriteInfo(this.sword.sprite, 32, 32);
-    this.game.debug.body(this.sword.sprite);
-    this.game.debug.body(this.mobs);
-  }
   this.updateStats();
 };
 
