@@ -2,7 +2,7 @@
 
 var World = require('../entities/world');
 
-var Play = module.exports = function() {
+var Play = module.exports = function () {
   Phaser.State.call(this);
   this.gameWorld = new World();
 };
@@ -79,13 +79,13 @@ var tileset = {
 
 Play.prototype.player = new Player(20, 'joan', 'male');
 
-Play.prototype.updateStats = function() {
+Play.prototype.updateStats = function () {
   var statusBar = document.getElementById("status");
   statusBar.innerHTML = '';
 
   function addText(label, value) {
     var span = document.createElement('span');
-    span.innerHTML= label + ': <strong>' + value + '</strong>';
+    span.innerHTML = label + ': <strong>' + value + '</strong>';
     statusBar.appendChild(span);
   }
 
@@ -98,43 +98,49 @@ Play.prototype.updateStats = function() {
   addText('$', this.player.stats.money);
 };
 
-Play.prototype.render = function() {
+Play.prototype.render = function () {
   this.game.time.advancedTiming = true;
-  this.game.debug.text(this.game.time.fps || '--', window.innerWidth-40, window.innerHeight-10, "#ffffff");
+  this.game.debug.text(this.game.time.fps || '--', window.innerWidth - 40, window.innerHeight - 10, "#ffffff");
   this.updateStats();
 };
 
-Play.prototype.createMobs = function() {
+Play.prototype.createMobs = function () {
+  var mobCount = Math.round(this.map.size * 0.1),
+    mobID = 0;
+
   this.mobs = this.game.add.group();
   this.mobs.entities = [];
   this.mobs.enableBody = true;
   this.mobs.physicsBodyType = Phaser.Physics.ARCADE;
 
-  var mobID = 0;
-
-  for(var i = 0; i< this.map.size; i++) {
-    for(var j = 0; j< this.map.size; j++) {
-      if(this.map.walkable[i][j]) {
-        if(Math.floor((Math.random() * 100) + 1) > 98) {
-          var mobBaseLevel = Math.floor((Math.random() * 3)),
+  for (var i = 0; i < this.map.size; i++) {
+    for (var j = 0; j < this.map.size; j++) {
+      if (this.map.walkable[i][j]) {
+        if (mobCount--) {
+          if (Math.floor((Math.random() * 100) + 1) > 98) {
+            var mobBaseLevel = Math.floor((Math.random() * 3)),
               o = mobBaseLevel * 3,
               mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
 
-          mobSprite.animations.add('walk_left', [12 + o, 13 + o, 14 + o], 10, true);
-          mobSprite.animations.add('walk_right', [24 + o, 25 + o, 26 + o], 10, true);
-          mobSprite.animations.add('walk_up', [36 + o, 37 + o, 38 + o], 10, true);
-          mobSprite.animations.add('walk_down', [0 + o, 1 + o, 2 + o], 10, true);
-          mobSprite.animations.add('damage', [0,1,2], 10, true);
-          mobSprite.animations.add('attack', [0,1,2], 10, true);
+            mobSprite.animations.add('walk_left', [12 + o, 13 + o, 14 + o], 10, true);
+            mobSprite.animations.add('walk_right', [24 + o, 25 + o, 26 + o], 10, true);
+            mobSprite.animations.add('walk_up', [36 + o, 37 + o, 38 + o], 10, true);
+            mobSprite.animations.add('walk_down', [0 + o, 1 + o, 2 + o], 10, true);
+            mobSprite.animations.add('damage', [0, 1, 2], 10, true);
+            mobSprite.animations.add('attack', [0, 1, 2], 10, true);
 
-          this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i*j)+i, i, {x: this.map.size, y: this.map.size}, mobSprite, this.mobs.entities, this.map.walkable));
+            this.mobs.entities.push(new Mob(mobID++, this.game, this.player, i, j, (i * j) + i, i, {
+              x: this.map.size,
+              y: this.map.size
+            }, mobSprite, this.mobs.entities, this.map.walkable));
+          }
         }
       }
     }
   }
 };
 
-Play.prototype.drawMaze = function() {
+Play.prototype.drawMaze = function () {
   var self = this,
     map_width = (this.map.size + 1) * this.map.tile.width,
     map_height = (this.map.size + 1) * this.map.tile.height;
@@ -147,14 +153,10 @@ Play.prototype.drawMaze = function() {
   this.background = this.game.add.tileSprite(0, 0, 1984, 1984, 'tiles', tileset[biome].background);
   this.map.walkable = map.generateEmpty(map.size);
   this.map.level = this.gameWorld.currentRoomIndex;
-  this.map.name = this.gameWorld.room.biome + ' - ' + this.map.level;
+  this.map.name = this.gameWorld.room.name;
   this.map.size = this.gameWorld.room.map.size;
 
-  console.log('Map', map);
-  console.log('Walkable', this.map.walkable);
-  console.log('Entering:', this.map.name);
-
-  map.iterate(function(cell, y, x) {
+  map.iterate(function (cell, y, x) {
     self.map.walkable[x][y] = true;
     switch (cell) {
       case 1:
@@ -165,7 +167,7 @@ Play.prototype.drawMaze = function() {
         }
         break;
       case 2:
-        if(self.map.level > 1) {
+        if (self.map.level > 1) {
           self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].enter);
           self.map.warps.start.x = x;
           self.map.warps.start.y = y;
@@ -195,7 +197,7 @@ Play.prototype.drawMaze = function() {
   this.player.sprite.bringToTop();
 };
 
-Play.prototype.loadMap = function(map) {
+Play.prototype.loadMap = function (map) {
   this.walls = this.game.add.group();
   this.walls.enableBody = true;
   this.walls.physicsBodyType = Phaser.Physics.ARCADE;
@@ -209,17 +211,17 @@ Play.prototype.loadMap = function(map) {
   this.player.sprite.bringToTop();
 
   this.player.sprite.animations.add('stand', [0], 1, false);
-  this.player.sprite.animations.add('walk_left', [4,5,6,7], 10, true);
-  this.player.sprite.animations.add('walk_right', [8,9,10,11], 10, true);
-  this.player.sprite.animations.add('walk_up', [12,13,14,15], 10, true);
-  this.player.sprite.animations.add('walk_down', [0,1,2,3], 10, true);
-  this.player.sprite.animations.add('damage', [16,17,18,19], 10, true);
-  this.player.sprite.animations.add('attack', [20,21,22,23], 10, true);
+  this.player.sprite.animations.add('walk_left', [4, 5, 6, 7], 10, true);
+  this.player.sprite.animations.add('walk_right', [8, 9, 10, 11], 10, true);
+  this.player.sprite.animations.add('walk_up', [12, 13, 14, 15], 10, true);
+  this.player.sprite.animations.add('walk_down', [0, 1, 2, 3], 10, true);
+  this.player.sprite.animations.add('damage', [16, 17, 18, 19], 10, true);
+  this.player.sprite.animations.add('attack', [20, 21, 22, 23], 10, true);
 
   this.drawMaze();
 };
 
-Play.prototype.create = function() {
+Play.prototype.create = function () {
   this.timer = {
     turn: true
   };
@@ -239,16 +241,16 @@ Play.prototype.create = function() {
   }
 };
 
-Play.prototype.startMoving = function() {
+Play.prototype.startMoving = function () {
   this.player.moving = true;
 };
 
-Play.prototype.stopMoving = function() {
+Play.prototype.stopMoving = function () {
   this.player.moving = false;
 };
 
-Play.prototype.validCell = function(x, y) {
-  if(!this.map.walkable[x][y]) {
+Play.prototype.validCell = function (x, y) {
+  if (!this.map.walkable[x][y]) {
     return false;
   }
 
@@ -257,8 +259,8 @@ Play.prototype.validCell = function(x, y) {
 
     if (mob.location.x === x && mob.location.y === y) {
 
-      if(this.keys.spaceBar.isDown) {
-        if(this.player.attack(mob)) {
+      if (this.keys.spaceBar.isDown) {
+        if (this.player.attack(mob)) {
           var animation = this.game.add.tween(mob.sprite);
 
           animation.to({alpha: 0.5}, 120, Phaser.Easing.linear, true, 0, 1, false);
@@ -274,12 +276,12 @@ Play.prototype.validCell = function(x, y) {
   return true;
 };
 
-Play.prototype.checkWarps = function(x, y) {
+Play.prototype.checkWarps = function (x, y) {
   for (var index in this.map.warps) {
     var warp = this.map.warps[index];
 
-    if(warp.x === x && warp.y === y) {
-      if(warp.level) {
+    if (warp.x === x && warp.y === y) {
+      if (warp.level) {
         this.gameWorld.goNextLevel();
         this.loadMap(warp);
       } else {
@@ -290,7 +292,7 @@ Play.prototype.checkWarps = function(x, y) {
   }
 };
 
-Play.prototype.movePlayer = function(left, top, action) {
+Play.prototype.movePlayer = function (left, top, action) {
   var locationBackup = {
     x: this.player.location.x,
     y: this.player.location.y
@@ -300,23 +302,23 @@ Play.prototype.movePlayer = function(left, top, action) {
   this.player.location.y += top;
   this.player.moving = true;
 
-  if(this.player.location.x < 0) {
+  if (this.player.location.x < 0) {
     this.player.location.x = 0;
   }
 
-  if(this.player.location.y < 0) {
+  if (this.player.location.y < 0) {
     this.player.location.y = 0;
   }
 
-  if(this.player.location.x > this.map.size-1) {
-    this.player.location.x = this.map.size-1;
+  if (this.player.location.x > this.map.size - 1) {
+    this.player.location.x = this.map.size - 1;
   }
 
-  if(this.player.location.y > this.map.size-1) {
-    this.player.location.y = this.map.size-1;
+  if (this.player.location.y > this.map.size - 1) {
+    this.player.location.y = this.map.size - 1;
   }
 
-  if(!this.validCell(this.player.location.x, this.player.location.y)) {
+  if (!this.validCell(this.player.location.x, this.player.location.y)) {
     this.player.moving = false;
     this.player.location = locationBackup;
   } else {
@@ -332,7 +334,7 @@ Play.prototype.movePlayer = function(left, top, action) {
     animation.onStart.add(this.startMoving, this)
     animation.onComplete.addOnce(this.stopMoving, this);
 
-    switch(action) {
+    switch (action) {
       case 'attack':
         this.checkWarps(this.player.location.x, this.player.location.y);
         break;
@@ -340,11 +342,11 @@ Play.prototype.movePlayer = function(left, top, action) {
   }
 };
 
-Play.prototype.timerTick = function() {
-  for(var index in this.mobs.entities) {
+Play.prototype.timerTick = function () {
+  for (var index in this.mobs.entities) {
     var mob = this.mobs.entities[index];
 
-    if(mob.isAlive()) {
+    if (mob.isAlive()) {
       mob.chooseNextMove();
     } else {
       var textureModifier = Math.floor(Math.random() * 2) + 1;
@@ -357,44 +359,44 @@ Play.prototype.timerTick = function() {
   this.timer.turn = true;
 };
 
-Play.prototype.update = function() {
-  if(!this.player.sprite) {
+Play.prototype.update = function () {
+  if (!this.player.sprite) {
     return;
   }
 
   this.player.sprite.body.velocity.setTo(0, 0);
 
-  if(this.timer.turn) {
+  if (this.timer.turn) {
     this.timer.turn = false;
     var self = this;
-    setTimeout(function(){
+    setTimeout(function () {
       self.timerTick()
     }, 200);
   }
 
-  if(!this.player.isAlive()) {
+  if (!this.player.isAlive()) {
     console.log('You are dead!');
     window.location.reload();
   }
 
-  if(!this.player.moving && this.player.isAlive()) {
+  if (!this.player.moving && this.player.isAlive()) {
     this.game.input.update();
 
-    if(this.cursors.down.isDown) {
-      this.movePlayer(0,1);
+    if (this.cursors.down.isDown) {
+      this.movePlayer(0, 1);
       this.player.sprite.animations.play('walk_down');
-    } else if(this.cursors.up.isDown) {
-      this.movePlayer(0,-1);
+    } else if (this.cursors.up.isDown) {
+      this.movePlayer(0, -1);
       this.player.sprite.animations.play('walk_up');
-    } else if(this.cursors.left.isDown) {
+    } else if (this.cursors.left.isDown) {
       this.movePlayer(-1, 0);
       this.player.sprite.animations.play('walk_left');
-    } else if(this.cursors.right.isDown) {
+    } else if (this.cursors.right.isDown) {
       this.movePlayer(1, 0);
       this.player.sprite.animations.play('walk_right');
     }
 
-    if(this.keys.spaceBar.isDown) {
+    if (this.keys.spaceBar.isDown) {
       this.movePlayer(0, 0, 'attack');
       this.player.sprite.animations.play('attack');
     }
