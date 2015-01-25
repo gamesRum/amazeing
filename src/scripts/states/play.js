@@ -40,7 +40,7 @@ Play.prototype.map = {
 };
 
 var tileset = {
-  cave: {
+  cavern: {
     background: 10,
     wall: 246,
     enter: 403,
