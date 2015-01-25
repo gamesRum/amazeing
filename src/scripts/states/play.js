@@ -496,7 +496,6 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.hp = self.player.stats.maxHP;
-                  self.showMessage('Thank you!');
                 } else {
                   self.showMessage('You need more money!');
                 }
@@ -514,7 +513,6 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.str += 1;
-                  self.showMessage('Thank you!');
                 } else {
                   self.showMessage('You need more money!');
                 }
@@ -532,7 +530,6 @@ Play.prototype.checkWarps = function (x, y) {
                 if(self.player.stats.money > 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.def += 1;
-                  self.showMessage('Thank you!');
                 } else {
                   self.showMessage('You need more money!');
                 }
