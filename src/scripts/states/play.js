@@ -78,7 +78,7 @@ var tileset = {
 },
 animations = {
   ogre: {
-    attack: [56],
+    attack: [56,60,64,68],
     look_down: [56],
     look_left: [60],
     look_right: [64],
@@ -91,11 +91,11 @@ animations = {
     die: [83]
   },
   human: {
-    attack: [4],
+    attack: [0,4,8,12],
+    look_down: [0],
     look_left: [4],
     look_right: [8],
     look_up: [12],
-    look_down: [0],
     walk_down: [0, 1, 2, 3],
     walk_left: [4, 5, 6, 7],
     walk_right: [8, 9, 10, 11],
@@ -104,7 +104,7 @@ animations = {
     die: [27]
   },
   zombie: {
-    attack: [28],
+    attack: [28,32,36,40],
     look_down: [28],
     look_left: [32],
     look_right: [36],
@@ -247,7 +247,7 @@ Play.prototype.createNpcs = function () {
 };
 
 Play.prototype.createMobs = function () {
-  var mobCount = Math.round(this.map.size * 0.1),
+  var mobCount = Math.round(this.map.size * 0.3),
       mobID = 0;
 
   this.mobs = this.game.add.group();
