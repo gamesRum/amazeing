@@ -77,16 +77,27 @@ var tileset = {
   }
 };
 
+var $statusBar = document.getElementById('status'),
+    $messageBox = document.getElementById('messageBox'),
+    $text = document.getElementById('messageText'),
+    $buttons = {
+      accept: document.getElementById('acceptButton'),
+      cancel: document.getElementById('cancelButton'),
+      buy: document.getElementById('buyButton'),
+      sell: document.getElementById('sellButton')
+    };
+
+
 Play.prototype.player = new Player(20, 'joan', 'male');
 
 Play.prototype.updateStats = function () {
-  var statusBar = document.getElementById('status');
-  statusBar.innerHTML = '';
+  $statusBar.innerHTML = '';
 
   function addText(label, value) {
-    var span = document.createElement('span');
-    span.innerHTML = label + ': <strong>' + value + '</strong>';
-    statusBar.appendChild(span);
+    var $span = document.createElement('span');
+
+    $span.innerHTML = label + ': <strong>' + value + '</strong>';
+    $statusBar.appendChild($span);
   }
 
   addText('Map', this.map.name);
@@ -94,6 +105,47 @@ Play.prototype.updateStats = function () {
   addText('STR', this.player.stats.str);
   addText('DEF', this.player.stats.def);
   addText('$', this.player.stats.money);
+};
+
+Play.prototype.hideMessage = function () {
+  $messageBox.style.display = "none";
+};
+
+Play.prototype.showMessage = function (message, callbacks) {
+  $messageBox.style.display = "block";
+  $text.innerText = message;
+
+  if(callbacks.accept) {
+    $buttons.accept.onclick = callbacks.accept;
+    $buttons.accept.style.display = "inline-block";
+  } else {
+    $buttons.accept.removeAttribute("onclick");
+    $buttons.accept.style.display = "none";
+  }
+
+  if(callbacks.cancel) {
+    $buttons.cancel.onclick = callbacks.cancel;
+    $buttons.cancel.style.display = "inline-block";
+  } else {
+    $buttons.cancel.removeAttribute("onclick");
+    $buttons.cancel.style.display = "none";
+  }
+
+  if(callbacks.buy) {
+    $buttons.buy.onclick = callbacks.buy;
+    $buttons.buy.style.display = "inline-block";
+  } else {
+    $buttons.buy.removeAttribute("onclick");
+    $buttons.buy.style.display = "none";
+  }
+
+  if(callbacks.sell) {
+    $buttons.sell.onclick = callbacks.sell;
+    $buttons.sell.style.display = "inline-block";
+  } else {
+    $buttons.sell.removeAttribute("onclick");
+    $buttons.sell.style.display = "none";
+  }
 };
 
 Play.prototype.render = function () {
@@ -219,7 +271,21 @@ Play.prototype.loadMap = function (map) {
   this.drawMaze();
 };
 
+Play.prototype.initKeyboard = function() {
+  this.loadMap(this.map);
+
+  this.cursors = this.game.input.keyboard.createCursorKeys();
+  this.keys = {
+    spaceBar: this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
+    escape: this.game.input.keyboard.addKey(Phaser.Keyboard.ESC)
+  }
+
+  this.hideMessage();
+};
+
 Play.prototype.create = function () {
+  var self = this;
+
   this.timer = {
     turn: true
   };
@@ -229,14 +295,13 @@ Play.prototype.create = function () {
 
   this.game.physics.startSystem(Phaser.Physics.ARCADE);
   this.game.stage.disableVisibilityChange = true;
+  this.game.stage.backgroundColor = 0x222222;
 
-  this.loadMap(this.map);
-
-  this.cursors = this.game.input.keyboard.createCursorKeys();
-  this.keys = {
-    spaceBar: this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
-    escape: this.game.input.keyboard.addKey(Phaser.Keyboard.ESC)
-  }
+  this.showMessage('Welcome to UberQuest!', {
+    accept: function(){
+      self.initKeyboard();
+    }
+  });
 };
 
 Play.prototype.startMoving = function () {
@@ -373,8 +438,12 @@ Play.prototype.update = function () {
   }
 
   if (!this.player.isAlive()) {
-    console.log('You are dead!');
-    window.location.reload();
+    this.showMessage('GAME OVER!', {
+      accept: function() {
+        window.location.reload();
+      }
+    });
+
   }
 
   if (!this.player.moving && this.player.isAlive()) {
