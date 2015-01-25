@@ -51,6 +51,7 @@ World.prototype.goPreviousLevel = function(state) {
  */
 World.prototype.addNewRoom = function() {
   stepBiome();
+  this.currentLevel++;
   var newRoom = new Room('maze', this.getMapSize(), currentBiome).init();
   this.roomsArray.push(newRoom);
 };
