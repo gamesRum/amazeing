@@ -1,4 +1,4 @@
-This is Amazeing!
+This is Amazeing!!
 ===
 
 [ ![Codeship Status for gamesRum/amazeing](https://codeship.com/projects/b1fe33e0-898a-0132-8209-4635861fb902/status?branch=master)](https://codeship.com/projects/59757)
