@@ -5,6 +5,7 @@ var Being = require('./being');
 var Mob = module.exports = function(id, game, player, x, y, money, level, bounds, sprite, entities, walkable) {
   Being.call(this);
   this.stats.money = money;
+  this.stats.str = Math.ceil((level - 1) * 0.5);
   this.stats.level = level;
   this.stats.maxHP = level;
   this.stats.hp = level;

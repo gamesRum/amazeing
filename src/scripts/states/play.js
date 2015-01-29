@@ -473,8 +473,9 @@ Play.prototype.create = function () {
   this.game.stage.backgroundColor = 0x222222;
 
   this.openNPC(
-    'Welcome to Amazeing, don\'t Die!',
-    'Select your race: <br/> <small>Every race has its own bonus and maybe it has money!</small>',
+    'Welcome to <span style="color:#f76000">Amazeing</span>!',
+    'Move it with the cursor keys, action it with space bar! <br/> ' +
+    'Now select your race, every one has its own bonus and maybe it has money',
     ['ogre', 'human', 'zombie'],
     function(choice) {
       switch(choice) {
