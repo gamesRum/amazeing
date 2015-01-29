@@ -1,6 +1,8 @@
 This is Amazeing!
 ===
 
+![codeship](https://codeship.com/projects/59757/status?branch=master)
+
 Amazeing is a roguelike game, made it entirely with javascript.
 
 ![amazeing](http://i.imgur.com/ZtRkGYh.jpg)
