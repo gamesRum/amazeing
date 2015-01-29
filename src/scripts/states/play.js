@@ -472,10 +472,8 @@ Play.prototype.create = function () {
   this.game.stage.disableVisibilityChange = true;
   this.game.stage.backgroundColor = 0x222222;
 
-  this.textGroup = this.game.add.group();
-
   this.openNPC(
-    'Welcome & Don\'t Die!',
+    'Welcome to Amazeing, don\'t Die!',
     'Select your race: <br/> <small>Every race has its own bonus and maybe it has money!</small>',
     ['ogre', 'human', 'zombie'],
     function(choice) {
