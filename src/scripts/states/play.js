@@ -3,7 +3,7 @@
 var World = require('../entities/world'),
   utils = utils = require('../utils');
 
-var Play = module.exports = function () {
+var Play = module.exports = function() {
   Phaser.State.call(this);
   this.gameWorld = new World();
 };
@@ -41,105 +41,105 @@ Play.prototype.map = {
 };
 
 var tileset = {
-  cavern: {
-    background: 11,
-    wall: 247,
-    enter: 403,
-    exit: 257,
-    decoration: [259]
+    cavern: {
+      background: 11,
+      wall: 247,
+      enter: 403,
+      exit: 257,
+      decoration: [259]
+    },
+    snow: {
+      background: 9,
+      wall: 239,
+      enter: 403,
+      exit: 249,
+      decoration: [220, 232, 233, 235]
+    },
+    desert: {
+      background: 81,
+      wall: 231,
+      enter: 403,
+      exit: 421,
+      decoration: [279, 295, 308, 401]
+    },
+    castle: {
+      background: 15,
+      wall: 270,
+      enter: 403,
+      exit: 21,
+      decoration: [212]
+    },
+    forest: {
+      background: 6,
+      wall: 246,
+      enter: 403,
+      exit: 257,
+      decoration: [224, 225, 226, 227, 240, 241, 242, 243]
+    }
   },
-  snow: {
-    background: 9,
-    wall: 239,
-    enter: 403,
-    exit: 249,
-    decoration: [220, 232, 233, 235]
+  weapons = {
+    ogre: 87,
+    human: 70,
+    zombie: 112
   },
-  desert: {
-    background: 81,
-    wall: 231,
-    enter: 403,
-    exit: 421,
-    decoration: [279, 295, 308, 401]
-  },
-  castle: {
-    background: 15,
-    wall: 270,
-    enter: 403,
-    exit: 21,
-    decoration: [212]
-  },
-  forest: {
-    background: 6,
-    wall: 246,
-    enter: 403,
-    exit: 257,
-    decoration: [224, 225, 226, 227, 240, 241, 242, 243]
-  }
-},
-weapons = {
-  ogre: 87,
-  human: 70,
-  zombie: 112
-},
-animations = {
-  ogre: {
-    attack: [56,60,64,68],
-    look_down: [56],
-    look_left: [60],
-    look_right: [64],
-    look_up: [68],
-    walk_down: [56,57,58,59],
-    walk_left: [60,61,62,63],
-    walk_right: [64,65,66,67],
-    walk_up: [68,69,70,71],
-    damage: [72,73,74,75],
-    die: [83]
-  },
-  human: {
-    attack: [0,4,8,12],
-    look_down: [0],
-    look_left: [4],
-    look_right: [8],
-    look_up: [12],
-    walk_down: [0, 1, 2, 3],
-    walk_left: [4, 5, 6, 7],
-    walk_right: [8, 9, 10, 11],
-    walk_up: [12, 13, 14, 15],
-    damage: [16, 17, 18, 19],
-    die: [27]
-  },
-  zombie: {
-    attack: [28,32,36,40],
-    look_down: [28],
-    look_left: [32],
-    look_right: [36],
-    look_up: [40],
-    walk_down: [28, 29, 30, 31],
-    walk_left: [32, 33, 34, 35],
-    walk_right: [36, 37, 38, 39],
-    walk_up: [40,41,42,43],
-    damage: [44, 45, 46, 47],
-    die: [55]
-  }
-};
+  animations = {
+    ogre: {
+      attack: [56, 60, 64, 68],
+      look_down: [56],
+      look_left: [60],
+      look_right: [64],
+      look_up: [68],
+      walk_down: [56, 57, 58, 59],
+      walk_left: [60, 61, 62, 63],
+      walk_right: [64, 65, 66, 67],
+      walk_up: [68, 69, 70, 71],
+      damage: [72, 73, 74, 75],
+      die: [83]
+    },
+    human: {
+      attack: [0, 4, 8, 12],
+      look_down: [0],
+      look_left: [4],
+      look_right: [8],
+      look_up: [12],
+      walk_down: [0, 1, 2, 3],
+      walk_left: [4, 5, 6, 7],
+      walk_right: [8, 9, 10, 11],
+      walk_up: [12, 13, 14, 15],
+      damage: [16, 17, 18, 19],
+      die: [27]
+    },
+    zombie: {
+      attack: [28, 32, 36, 40],
+      look_down: [28],
+      look_left: [32],
+      look_right: [36],
+      look_up: [40],
+      walk_down: [28, 29, 30, 31],
+      walk_left: [32, 33, 34, 35],
+      walk_right: [36, 37, 38, 39],
+      walk_up: [40, 41, 42, 43],
+      damage: [44, 45, 46, 47],
+      die: [55]
+    }
+  };
 
 var $statusBar = document.getElementById('status'),
-    $messageBox = document.getElementById('messageBox'),
-    $popupBox = document.getElementById('popupBox'),
-    $text = document.getElementById('messageText'),
-    $optionButtons = document.getElementById('optionButtons'),
-    $buttons = {
-      accept: document.getElementById('acceptButton'),
-      cancel: document.getElementById('cancelButton'),
-      buy: document.getElementById('buyButton'),
-      sell: document.getElementById('sellButton')
-    };
+  $messageBox = document.getElementById('messageBox'),
+  $popupBox = document.getElementById('popupBox'),
+  $text = document.getElementById('messageText'),
+  $optionButtons = document.getElementById('optionButtons'),
+  $buttons = {
+    accept: document.getElementById('acceptButton'),
+    cancel: document.getElementById('cancelButton'),
+    buy: document.getElementById('buyButton'),
+    sell: document.getElementById('sellButton')
+  };
 
 
 Play.prototype.player = new Player(20, 'joan', 'male');
 
-Play.prototype.updateStats = function () {
+Play.prototype.updateStats = function() {
   $statusBar.innerHTML = '';
 
   function addText(label, value) {
@@ -156,21 +156,21 @@ Play.prototype.updateStats = function () {
   addText('$', this.player.stats.money);
 };
 
-Play.prototype.hideMessage = function ($element) {
-  if(!$element) {
+Play.prototype.hideMessage = function($element) {
+  if (!$element) {
     $element = $messageBox;
   }
 
   $element.className = "hidden";
 };
 
-Play.prototype.showMessage = function (message, callbacks) {
+Play.prototype.showMessage = function(message, callbacks) {
   $messageBox.className = "visible";
   $text.innerHTML = message;
   $optionButtons.innerHTML = '';
 
   function setButton($element, callback) {
-    if(callback) {
+    if (callback) {
       $element.onclick = callbacks.accept;
       $element.style.display = "inline-block";
     } else {
@@ -184,43 +184,43 @@ Play.prototype.showMessage = function (message, callbacks) {
   setButton($buttons.buy, callbacks && callbacks.buy);
   setButton($buttons.sell, callbacks && callbacks.sell);
 
-  if(!callbacks) {
+  if (!callbacks) {
     var self = this;
-    setTimeout(function () {
+    setTimeout(function() {
       self.hideMessage()
     }, 3000);
   }
 };
 
-Play.prototype.showPopup = function (message, faceClass) {
+Play.prototype.showPopup = function(message, faceClass) {
   $statusBar.style.display = 'block';
   $popupBox.className = "visible";
 
-  if(!faceClass) {
+  if (!faceClass) {
     faceClass = this.player.race;
   }
 
   $popupBox.innerHTML = '<blockquote><div class="' + faceClass + ' "></div><p>' + message + '</p></blockquote>';
 
   var self = this;
-  setTimeout(function () {
+  setTimeout(function() {
     self.hideMessage($popupBox);
   }, 2000);
 };
 
-Play.prototype.openNPC = function (name, message, options, callback) {
+Play.prototype.openNPC = function(name, message, options, callback) {
   $messageBox.className = "visible";
   $text.innerHTML = '<h1>' + name + '</h1><p>' + message + '</p>';
   $optionButtons.innerHTML = '';
 
-  if(options) {
-    for(var index in options) {
+  if (options) {
+    for (var index in options) {
       var option = options[index],
         $optionButton = document.createElement('button'),
         self = this;
 
       $optionButton.innerHTML = option;
-      $optionButton.onclick = function(e){
+      $optionButton.onclick = function(e) {
         $optionButtons.innerText = '';
         self.hideMessage();
         callback(e.target.innerText);
@@ -228,37 +228,37 @@ Play.prototype.openNPC = function (name, message, options, callback) {
 
       $optionButtons.appendChild($optionButton);
 
-      if(index < 1) {
+      if (index < 1) {
         $optionButton.focus();
       }
     }
   }
 
-  if(!callback) {
+  if (!callback) {
     var self = this;
-    setTimeout(function () {
+    setTimeout(function() {
       self.hideMessage()
     }, 3000);
   }
 };
 
-Play.prototype.render = function () {
+Play.prototype.render = function() {
   //this.game.time.advancedTiming = true;
   //this.game.debug.text(this.game.time.fps || '--', window.innerWidth - 40, window.innerHeight - 10, "#ffffff");
   this.updateStats();
 };
 
-Play.prototype.createNpcs = function () {
+Play.prototype.createNpcs = function() {
   var npcCount = Math.round(this.map.size * 0.1);
 
-  if(this.npcsSprites) {
+  if (this.npcsSprites) {
     this.npcsSprites.destroy();
   }
 
   this.npcsSprites = this.game.add.group();
   this.npcs = [];
 
-  while(npcCount > 0) {
+  while (npcCount > 0) {
     var i = Math.floor((Math.random() * this.map.size)),
       j = Math.floor((Math.random() * this.map.size));
 
@@ -266,10 +266,10 @@ Play.prototype.createNpcs = function () {
       var npcType = Math.floor((Math.random() * 3)),
         npcSprite = this.npcsSprites;
 
-        npcSprite.x = i * this.map.tile.width;
-        npcSprite.y = j * this.map.tile.width;
-        npcSprite.create(0,0, 'tiles', 141);
-        npcSprite.create(4, -9, 'tiles', 144 + npcType).scale.setTo(0.7, 0.7);
+      npcSprite.x = i * this.map.tile.width;
+      npcSprite.y = j * this.map.tile.width;
+      npcSprite.create(0, 0, 'tiles', 141);
+      npcSprite.create(4, -9, 'tiles', 144 + npcType).scale.setTo(0.7, 0.7);
 
       this.npcs.push({
         sprite: npcSprite,
@@ -278,16 +278,16 @@ Play.prototype.createNpcs = function () {
         y: j
       });
 
-      npcCount --;
+      npcCount--;
     }
   }
 };
 
-Play.prototype.createMobs = function () {
+Play.prototype.createMobs = function() {
   var mobCount = Math.round(this.map.size * 0.5),
-      mobID = 0;
+    mobID = 0;
 
-  if(this.mobs) {
+  if (this.mobs) {
     this.mobs.destroy();
   }
 
@@ -296,7 +296,7 @@ Play.prototype.createMobs = function () {
   this.mobs.physicsBodyType = Phaser.Physics.ARCADE;
   this.mobs.entities = [];
 
-  while(mobCount > 0) {
+  while (mobCount > 0) {
     var i = Math.floor((Math.random() * this.map.size)),
       j = Math.floor((Math.random() * this.map.size));
 
@@ -330,14 +330,14 @@ Play.prototype.createMobs = function () {
   }
 };
 
-Play.prototype.drawMaze = function () {
+Play.prototype.drawMaze = function() {
   var self = this,
-      biome = this.gameWorld.room.biome,
-      map = this.gameWorld.room.map,
-      map_width = 0,
-      map_height = 0;
+    biome = this.gameWorld.room.biome,
+    map = this.gameWorld.room.map,
+    map_width = 0,
+    map_height = 0;
 
-  if(this.walls) {
+  if (this.walls) {
     this.walls.destroy();
   }
 
@@ -355,7 +355,7 @@ Play.prototype.drawMaze = function () {
   this.game.world.setBounds(0, 0, map_width, map_height);
   //this.game.add.tileSprite(0, 0, map_width, map_height, 'tiles', tileset[biome].background);
 
-  map.iterate(function (cell, y, x) {
+  map.iterate(function(cell, y, x) {
     self.map.walked [x][y] = {
       seen: false,
       sprite: self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].background)
@@ -402,11 +402,11 @@ Play.prototype.drawMaze = function () {
   this.player.location.y = spawnPoint.row;
   this.player.sprite.bringToTop();
   this.sword.sprite.bringToTop();
-  this.movePlayer(0,0);
+  this.movePlayer(0, 0);
 };
 
-Play.prototype.loadMap = function (map) {
-  if(!this.player.sprite) {
+Play.prototype.loadMap = function(map) {
+  if (!this.player.sprite) {
 
     this.player.sprite = this.game.add.sprite(this.player.width, this.player.height, 'avatar');
     this.player.sprite.position.x = this.player.location.x * this.player.width;
@@ -429,13 +429,13 @@ Play.prototype.loadMap = function (map) {
 
     var weaponOffset = this.player.stats.str - 1;
 
-    if(weaponOffset > 10) {
+    if (weaponOffset > 10) {
       weaponOffset = 10;
     }
 
     this.sword = {};
     this.sword.sprite = this.game.add.sprite(0, 0, 'items', weapons[this.player.race] + weaponOffset);
-    this.sword.sprite.scale.setTo(0.7,0.7);
+    this.sword.sprite.scale.setTo(0.7, 0.7);
     this.sword.sprite.name = 'sword';
     this.sword.sprite.physicsBodyType = Phaser.Physics.ARCADE;
     this.sword.sprite.exists = false;
@@ -455,7 +455,7 @@ Play.prototype.initKeyboard = function() {
   };
 };
 
-Play.prototype.create = function () {
+Play.prototype.create = function() {
   var self = this;
   this.timer = {
     turn: true
@@ -478,7 +478,7 @@ Play.prototype.create = function () {
     'Now select your race, every one has its own bonus and maybe it has money',
     ['ogre', 'human', 'zombie'],
     function(choice) {
-      switch(choice) {
+      switch (choice) {
         case 'ogre':
           self.player.stats = {
             money: 0,
@@ -516,22 +516,22 @@ Play.prototype.create = function () {
   );
 };
 
-Play.prototype.startMoving = function () {
+Play.prototype.startMoving = function() {
   this.player.moving = true;
 };
 
-Play.prototype.stopMoving = function () {
+Play.prototype.stopMoving = function() {
   this.player.moving = false;
 };
 
-Play.prototype.validCell = function (x, y) {
+Play.prototype.validCell = function(x, y) {
   if (!this.map.walkable[x][y]) {
     return false;
   }
   return true;
 };
 
-Play.prototype.checkWarps = function (x, y) {
+Play.prototype.checkWarps = function(x, y) {
   for (var index in this.map.warps) {
     var warp = this.map.warps[index];
 
@@ -554,7 +554,7 @@ Play.prototype.checkWarps = function (x, y) {
     if (npc.x === x && npc.y === y) {
       var self = this;
 
-      switch(npc.type) {
+      switch (npc.type) {
         case 0:
           self.showPopup('Hello, darling!!!', 'hospital');
           this.openNPC(
@@ -562,8 +562,8 @@ Play.prototype.checkWarps = function (x, y) {
             'Do you want to get healthy? <br/> <small>It will cost you $50</small>',
             ['yes', 'no'],
             function(choice) {
-              if(choice === 'yes') {
-                if(self.player.stats.money >= 50) {
+              if (choice === 'yes') {
+                if (self.player.stats.money >= 50) {
                   self.player.stats.money -= 50;
                   self.player.stats.hp = self.player.stats.maxHP;
                   self.showPopup('Thank you!!!', 'hospital');
@@ -581,8 +581,8 @@ Play.prototype.checkWarps = function (x, y) {
             'Do you want to improve your armor STR+1? <br/> <small>It will cost you $100</small>',
             ['yes', 'no'],
             function(choice) {
-              if(choice === 'yes') {
-                if(self.player.stats.money >= 100) {
+              if (choice === 'yes') {
+                if (self.player.stats.money >= 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.str += 1;
                   self.showPopup('Thank you!!!', 'armor');
@@ -600,8 +600,8 @@ Play.prototype.checkWarps = function (x, y) {
             'Do you want to improve your shield DEF+1? <br/> <small>It will cost you $100</small>',
             ['yes', 'no'],
             function(choice) {
-              if(choice === 'yes') {
-                if(self.player.stats.money >= 100) {
+              if (choice === 'yes') {
+                if (self.player.stats.money >= 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.def += 1;
                   self.showPopup('Thank you!!!', 'shield');
@@ -617,7 +617,7 @@ Play.prototype.checkWarps = function (x, y) {
   }
 };
 
-Play.prototype.calculateFOV = function () {
+Play.prototype.calculateFOV = function() {
   //var self= this;
   //function watch(x, y) {
   //  var cell = self.map.walked[x][y];
@@ -638,7 +638,7 @@ Play.prototype.calculateFOV = function () {
   //watch(x-1, y);
 };
 
-Play.prototype.movePlayer = function (left, top, action) {
+Play.prototype.movePlayer = function(left, top, action) {
   var locationBackup = {
     x: this.player.location.x,
     y: this.player.location.y
@@ -690,7 +690,7 @@ Play.prototype.movePlayer = function (left, top, action) {
   }
 };
 
-Play.prototype.timerTick = function () {
+Play.prototype.timerTick = function() {
   for (var index in this.mobs.entities) {
     var mob = this.mobs.entities[index];
 
