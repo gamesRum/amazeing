@@ -118,8 +118,12 @@ gulp.task('build:css', function() {
 
 gulp.task('build:vendors', function() {
   var bowerConfig = JSON.parse(fs.readFileSync('./.bowerrc', 'utf8'));
+  var vendors = [
+    './' + bowerConfig['directory'] + '/phaser/build/phaser*',
+    './' + bowerConfig['directory'] + '/zepto/zepto*min*'
+  ];
 
-  return gulp.src('./' + bowerConfig['directory'] + '/phaser/build/phaser*')
+  return gulp.src(vendors)
     .pipe(ignore('*.ts'))
     .pipe(gulp.dest('./build/js/'));
 });
