@@ -37,6 +37,7 @@ window.onresize = function() {
   } else {
     window.mobileMode = false;
     game.updateMapSize();
+    $('#virtualPad').hide();
   }
   console.log(window.mobileMode);
 };
