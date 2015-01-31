@@ -14,12 +14,6 @@ Boot.prototype.preload = function() {
 };
 
 Boot.prototype.create = function() {
-  this.scale.minWidth = cfg.width;
-  this.scale.minHeight = cfg.height;
-  this.scale.pageAlignHorizontally = true;
-  this.scale.pageAlignVertically = true;
-  this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-  this.scale.setScreenSize();
-
+  $(window).trigger('resize');
   this.state.start('preloader');
 };
