@@ -72,7 +72,7 @@ gulp.task('build:audio', function() {
 
 gulp.task('build:fonts', function() {
   return gulp.src('./assets/fonts/**/*')
-    .pipe(gulp.dest('./build/assets/fonts'))
+    .pipe(gulp.dest('./build/fonts'))
     .pipe(browserSync.reload({stream: true, once: true}));
 });
 
@@ -108,7 +108,7 @@ gulp.task('build:js', function() {
 });
 
 gulp.task('build:css', function() {
-  return gulp.src('./src/stylesheets/*.styl')
+  return gulp.src(['./src/stylesheets/*.styl', './bower_components/fontawesome/css/font-awesome.css'])
     .pipe(stylus())
     .pipe(buffer())
     .pipe(gulpif(program.prod, cssmin()))

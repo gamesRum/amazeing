@@ -1,7 +1,5 @@
 'use strict';
 
-var cfg = require('../../../config');
-
 var Boot = module.exports = function() {
   Phaser.State.call(this);
 };
