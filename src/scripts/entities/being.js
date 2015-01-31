@@ -1,6 +1,8 @@
 'use strict';
 
 var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
+  Phaser.Sprite.call(this);
+
   this.bag = {
     items: [],
     size: bagSize || 10
@@ -27,12 +29,12 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
 
   this.moving = false;
   this.sprite = null;
+  this.health = maxHP || 100,
   this.stats =  {
     level: 1,
     maxHP: maxHP || 100,
     maxSP: maxSP || 100,
     money: money || 0,
-    hp: maxHP || 100,
     sp: maxSP || 100,
     str: 2,
     def: 1
@@ -41,6 +43,9 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
   this.height= 32;
   this.width= 32;
 };
+
+Being.prototype = Object.create(Phaser.Sprite.prototype);
+Being.prototype.constructor = Being;
 
 Being.prototype.damage = function(str) {
   if(this.stats.hp) {

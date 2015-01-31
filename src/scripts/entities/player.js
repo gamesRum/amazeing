@@ -4,7 +4,7 @@ var Being = require('./being');
 
 var Player = module.exports = function(hp, name, genre) {
   Being.call(this);
-  this.stats.hp = hp;
+  this.health = hp;
   this.race = 'human';
   this.name = name;
   this.genre = genre;
@@ -25,8 +25,6 @@ Player.prototype.damage = function(str) {
     if(hit > 0) {
       this.stats.hp = this.stats.hp - hit;
     }
-
-    this.showDamage(hit, this.sprite.x, this.sprite.y, 'yellow');
 
     if(this.stats.hp < 0) {
       this.stats.hp = 0;

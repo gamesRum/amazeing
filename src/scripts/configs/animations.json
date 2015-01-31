@@ -1,0 +1,41 @@
+{
+  "ogre": {
+    "attack": [56, 60, 64, 68],
+    "look_down": [56],
+    "look_left": [60],
+    "look_right": [64],
+    "look_up": [68],
+    "walk_down": [56, 57, 58, 59],
+    "walk_left": [60, 61, 62, 63],
+    "walk_right": [64, 65, 66, 67],
+    "walk_up": [68, 69, 70, 71],
+    "damage": [72, 73, 74, 75],
+    "die": [83]
+  },
+  "human": {
+    "attack": [0, 4, 8, 12],
+    "look_down": [0],
+    "look_left": [4],
+    "look_right": [8],
+    "look_up": [12],
+    "walk_down": [0, 1, 2, 3],
+    "walk_left": [4, 5, 6, 7],
+    "walk_right": [8, 9, 10, 11],
+    "walk_up": [12, 13, 14, 15],
+    "damage": [16, 17, 18, 19],
+    "die": [27]
+  },
+  "zombie": {
+    "attack": [28, 32, 36, 40],
+    "look_down": [28],
+    "look_left": [32],
+    "look_right": [36],
+    "look_up": [40],
+    "walk_down": [28, 29, 30, 31],
+    "walk_left": [32, 33, 34, 35],
+    "walk_right": [36, 37, 38, 39],
+    "walk_up": [40, 41, 42, 43],
+    "damage": [44, 45, 46, 47],
+    "die": [55]
+  }
+}

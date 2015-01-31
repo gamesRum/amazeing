@@ -1,7 +1,9 @@
 'use strict';
 
-var World = require('../entities/world'),
-  utils = utils = require('../utils');
+var utils = utils = require('../utils'),
+  World = require('../entities/world'),
+  Player = require('../entities/player'),
+  Mob = require('../entities/mob');
 
 var Play = module.exports = function() {
   Phaser.State.call(this);
@@ -11,118 +13,13 @@ var Play = module.exports = function() {
 Play.prototype = Object.create(Phaser.State.prototype);
 Play.prototype.constructor = Play;
 
-var Player = require('../entities/player');
-var Mob = require('../entities/mob');
+/* Loading JSON files */
 
-Play.prototype.map = {
-  level: 1,
-  name: 'The Forest',
-  size: null,
-  tile: {
-    height: 32,
-    width: 32
-  },
-  walkable: null,
-  warps: {
-    start: {
-      level: null,
-      id: 'start',
-      x: 0,
-      y: 0
-    },
-    end: {
-      level: 2,
-      name: 'The Forest',
-      id: 'end',
-      x: 0,
-      y: 0
-    }
-  }
-};
+var tileset = require('../configs/tileset.json'),
+  weapons = require('../configs/weapons.json'),
+  animations = require('../configs/animations.json');
 
-var tileset = {
-    cavern: {
-      background: 11,
-      wall: 247,
-      enter: 403,
-      exit: 257,
-      decoration: [259]
-    },
-    snow: {
-      background: 9,
-      wall: 239,
-      enter: 403,
-      exit: 249,
-      decoration: [220, 232, 233, 235]
-    },
-    desert: {
-      background: 81,
-      wall: 231,
-      enter: 403,
-      exit: 421,
-      decoration: [279, 295, 308, 401]
-    },
-    castle: {
-      background: 15,
-      wall: 270,
-      enter: 403,
-      exit: 21,
-      decoration: [212]
-    },
-    forest: {
-      background: 6,
-      wall: 246,
-      enter: 403,
-      exit: 257,
-      decoration: [224, 225, 226, 227, 240, 241, 242, 243]
-    }
-  },
-  weapons = {
-    ogre: 87,
-    human: 70,
-    zombie: 112
-  },
-  animations = {
-    ogre: {
-      attack: [56, 60, 64, 68],
-      look_down: [56],
-      look_left: [60],
-      look_right: [64],
-      look_up: [68],
-      walk_down: [56, 57, 58, 59],
-      walk_left: [60, 61, 62, 63],
-      walk_right: [64, 65, 66, 67],
-      walk_up: [68, 69, 70, 71],
-      damage: [72, 73, 74, 75],
-      die: [83]
-    },
-    human: {
-      attack: [0, 4, 8, 12],
-      look_down: [0],
-      look_left: [4],
-      look_right: [8],
-      look_up: [12],
-      walk_down: [0, 1, 2, 3],
-      walk_left: [4, 5, 6, 7],
-      walk_right: [8, 9, 10, 11],
-      walk_up: [12, 13, 14, 15],
-      damage: [16, 17, 18, 19],
-      die: [27]
-    },
-    zombie: {
-      attack: [28, 32, 36, 40],
-      look_down: [28],
-      look_left: [32],
-      look_right: [36],
-      look_up: [40],
-      walk_down: [28, 29, 30, 31],
-      walk_left: [32, 33, 34, 35],
-      walk_right: [36, 37, 38, 39],
-      walk_up: [40, 41, 42, 43],
-      damage: [44, 45, 46, 47],
-      die: [55]
-    }
-  };
+/**********************/
 
 var $statusBar = document.getElementById('status'),
   $messageBox = document.getElementById('messageBox'),
@@ -136,10 +33,11 @@ var $statusBar = document.getElementById('status'),
     sell: document.getElementById('sellButton')
   };
 
-
-Play.prototype.player = new Player(20, 'joan', 'male');
-
 Play.prototype.updateStats = function() {
+  if (this.gameIsPaused) {
+    return;
+  }
+
   $statusBar.innerHTML = '';
 
   function addText(label, value) {
@@ -150,7 +48,10 @@ Play.prototype.updateStats = function() {
   }
 
   addText('Map', this.map.name + ' ( deep: ' + (this.gameWorld.currentRoomIndex + 1) + ' )');
-  addText('HP', this.player.stats.hp);
+  if (!this.player) {
+    return;
+  }
+  addText('HP', this.player.health);
   addText('STR', this.player.stats.str);
   addText('DEF', this.player.stats.def);
   addText('$', this.player.stats.money);
@@ -266,8 +167,8 @@ Play.prototype.createNpcs = function() {
       var npcType = Math.floor((Math.random() * 3)),
         npcSprite = this.npcsSprites;
 
-      npcSprite.x = i * this.map.tile.width;
-      npcSprite.y = j * this.map.tile.width;
+      npcSprite.x = i * tileset.tile_size.width;
+      npcSprite.y = j * tileset.tile_size.width;
       npcSprite.create(0, 0, 'tiles', 141);
       npcSprite.create(4, -9, 'tiles', 144 + npcType).scale.setTo(0.7, 0.7);
 
@@ -303,7 +204,7 @@ Play.prototype.createMobs = function() {
     if (this.map.walkable[i][j]) {
       var mobBaseLevel = Math.floor((Math.random() * 3)),
         o = mobBaseLevel * 3,
-        mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
+        mobSprite = this.mobs.create(i * tileset.tile_size.width, j * tileset.tile_size.width, 'mobs', 1);
 
       mobSprite.health = Math.round(2.5 * mobBaseLevel);
       mobSprite.customDefense = Math.round(1.2 * mobBaseLevel);
@@ -350,15 +251,15 @@ Play.prototype.drawMaze = function() {
 
   this.showPopup('Entering ' + this.map.name);
 
-  map_width = (this.map.size + 1) * this.map.tile.width;
-  map_height = (this.map.size + 1) * this.map.tile.height;
+  map_width = (this.map.size + 1) * tileset.tile_size.width;
+  map_height = (this.map.size + 1) * tileset.tile_size.height;
   this.game.world.setBounds(0, 0, map_width, map_height);
   //this.game.add.tileSprite(0, 0, map_width, map_height, 'tiles', tileset[biome].background);
 
   map.iterate(function(cell, y, x) {
     self.map.walked [x][y] = {
       seen: false,
-      sprite: self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].background)
+      sprite: self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tileset[biome].background)
     };
 
     self.map.walked[x][y].sprite.alpha = 1;
@@ -369,23 +270,23 @@ Play.prototype.drawMaze = function() {
         var items = tileset[biome].decoration,
           tile = items[Math.floor(Math.random() * items.length)];
         if (((Math.random() * 100) + 1) > 95) {
-          self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tile);
+          self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tile);
         }
         break;
       case 2:
         if (self.map.level > 1) {
-          self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].enter);
+          self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tileset[biome].enter);
           self.map.warps.start.x = x;
           self.map.warps.start.y = y;
         }
         break;
       case 3:
-        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].exit);
+        self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tileset[biome].exit);
         self.map.warps.end.x = x;
         self.map.warps.end.y = y;
         break;
       default:
-        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].wall);
+        self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tileset[biome].wall);
         self.map.walkable[x][y] = false;
         break;
     }
@@ -396,8 +297,8 @@ Play.prototype.drawMaze = function() {
   this.createMobs();
 
   var spawnPoint = map.getPlayerSpawnPoint(this.gameWorld.isGoingInverse);
-  this.player.sprite.position.x = spawnPoint.column * self.map.tile.width;
-  this.player.sprite.position.y = spawnPoint.row * self.map.tile.height;
+  this.player.sprite.position.x = spawnPoint.column * tileset.tile_size.width;
+  this.player.sprite.position.y = spawnPoint.row * tileset.tile_size.height;
   this.player.location.x = spawnPoint.column;
   this.player.location.y = spawnPoint.row;
   this.player.sprite.bringToTop();
@@ -457,14 +358,26 @@ Play.prototype.initKeyboard = function() {
 
 Play.prototype.create = function() {
   var self = this;
+
+  this.gameIsPaused = true;
+  this.map = {
+    warps: {
+      start: {
+        x: 0,
+        y: 0
+      },
+      end: {
+        x: 0,
+        y: 0
+      }
+    }
+  };
+
   this.timer = {
     turn: true
   };
 
   this.taunt = utils.getTaunt();
-
-  this.player.game = this.game;
-  this.player.showDamage = this.showDamage;
 
   this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -478,6 +391,7 @@ Play.prototype.create = function() {
     'Now select your race, every one has its own bonus and maybe it has money',
     ['ogre', 'human', 'zombie'],
     function(choice) {
+      self.player = new Player(100, 'tony', 'male');
       switch (choice) {
         case 'ogre':
           self.player.stats = {
@@ -514,6 +428,8 @@ Play.prototype.create = function() {
       self.initKeyboard();
     }
   );
+
+  this.gameIsPaused = false;
 };
 
 Play.prototype.startMoving = function() {
@@ -673,8 +589,8 @@ Play.prototype.movePlayer = function(left, top, action) {
 
     var animation = this.game.add.tween(this.player.sprite).to(
       {
-        x: this.player.location.x * this.map.tile.width,
-        y: this.player.location.y * this.map.tile.height
+        x: this.player.location.x * tileset.tile_size.width,
+        y: this.player.location.y * tileset.tile_size.height
       },
       200, Phaser.Easing.linear, true
     );
@@ -698,7 +614,7 @@ Play.prototype.timerTick = function() {
       mob.chooseNextMove();
     } else {
       var textureModifier = Math.floor(Math.random() * 2) + 1;
-      var newMob = this.mobs.create(mob.location.x * this.map.tile.width, mob.location.y * this.map.tile.width, 'tiles', 240 + textureModifier);
+      var newMob = this.mobs.create(mob.location.x * tileset.tile_size.width, mob.location.y * tileset.tile_size.width, 'tiles', 240 + textureModifier);
       this.mobs.entities.splice(index, 1);
       newMob.customDeath = true;
       mob.sprite.parent.remove(mob.sprite);
@@ -724,7 +640,7 @@ Play.prototype.showDamage = function(damage, x, y, color) {
 Play.prototype.update = function() {
   var self = this;
 
-  if (!this.player.sprite) {
+  if (!this.player) {
     return;
   }
 
