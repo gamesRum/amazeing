@@ -29,7 +29,7 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
 
   this.moving = false;
   this.sprite = null;
-  this.health = maxHP || 100,
+  this.health = maxHP || 100;
   this.stats =  {
     level: 1,
     maxHP: maxHP || 100,
