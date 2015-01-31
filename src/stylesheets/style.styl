@@ -121,6 +121,7 @@ body
   padding 0.5rem
   position fixed
   width 70%
+  z-index 999
 
   &.hidden
     -webkit-transition: opacity 0.5s ease-in;
@@ -155,3 +156,50 @@ body
   #optionButtons
     button
       display inline-block
+
+#virtualPad
+  bottom 0
+  display block
+  height 6.5rem
+  left 0
+  position fixed
+  width 100%
+  z-index 9999
+
+  button
+    background rgba(0,0,0,0.3)
+    border 0
+    border-radius 50%
+    color rgba(255, 255, 255, 0.5)
+    display block
+    height 2.5rem
+    left 1rem
+    position absolute
+    text-align center
+    top 0
+    width 2.5rem
+
+  #upButton
+  #downButton
+    left 3rem
+
+  #downButton
+    top 4rem
+
+  #leftButton
+  #rightButton
+    top 2rem
+
+  #rightButton
+    left 5rem
+
+  #actionButton
+  #optionButton
+    height 3rem
+    left auto
+    right 1rem
+    top 0rem
+    width 3rem
+
+  #optionButton
+    top 3.5rem
