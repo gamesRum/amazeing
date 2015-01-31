@@ -47,7 +47,7 @@ Play.prototype.updateStats = function() {
     $statusBar.appendChild($span);
   }
 
-  addText('Map', this.map.name + ' ( deep: ' + (this.gameWorld.currentRoomIndex + 1) + ' )');
+  addText(this.map.name, 'deep ' + (this.gameWorld.currentRoomIndex + 1));
   if (!this.player) {
     return;
   }
