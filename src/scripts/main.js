@@ -31,7 +31,7 @@ game.updateMapSize = function() {
 };
 
 window.onresize = function() {
-  if (1024 > window.innerWidth) {
+  if ($.os.phone) {
     window.mobileMode = true;
     game.updateMapSize();
   } else {

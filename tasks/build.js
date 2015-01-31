@@ -120,7 +120,8 @@ gulp.task('build:vendors', function() {
   var bowerConfig = JSON.parse(fs.readFileSync('./.bowerrc', 'utf8'));
   var vendors = [
     './' + bowerConfig['directory'] + '/phaser/build/phaser*',
-    './' + bowerConfig['directory'] + '/zepto/zepto*min*'
+    './' + bowerConfig['directory'] + '/zepto/zepto*min*',
+    './' + bowerConfig['directory'] + '/zepto-detect/zepto-detect.min.js'
   ];
 
   return gulp.src(vendors)
