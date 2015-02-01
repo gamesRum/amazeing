@@ -218,7 +218,7 @@ Play.prototype.createMobs = function() {
       mobSprite.animations.add('damage', [0, 1, 2], 10, true);
       mobSprite.animations.add('attack', [0, 1, 2], 10, true);
 
-      var newMob = new Mob(mobID++, this.game, this.player, i, j, (i + j) + i, i, {
+      var newMob = new Mob(this.game, mobID++, this.player, i, j, (i + j) + i, i, {
         x: this.map.size,
         y: this.map.size
       }, mobSprite, this.mobs.entities, this.map.walkable);
@@ -391,10 +391,10 @@ Play.prototype.create = function() {
     'Now select your race, every one has its own bonus and maybe it has money',
     ['ogre', 'human', 'zombie'],
     function(choice) {
-      self.player = new Player(100, 'tony', 'male');
+      var properties;
       switch (choice) {
         case 'ogre':
-          self.player.stats = {
+          properties = {
             money: 0,
             maxHP: 100,
             hp: 5,
@@ -403,7 +403,7 @@ Play.prototype.create = function() {
           };
           break;
         case 'zombie':
-          self.player.stats = {
+          properties = {
             money: 300,
             maxHP: 50,
             hp: 1,
@@ -413,7 +413,7 @@ Play.prototype.create = function() {
           break;
         default:
           choice = 'human';
-          self.player.stats = {
+          properties = {
             money: 100,
             maxHP: 100,
             hp: 10,
@@ -422,13 +422,15 @@ Play.prototype.create = function() {
           };
       }
 
-      self.player.race = choice;
+      properties.name = 'Guy';
+      properties.genre = 'male';
+      self.player = new Player(self.game, properties);
       self.showMessage('Prepare for battle!');
       self.loadMap(self.map);
       self.initKeyboard();
+      self.bindGamePad();
     }
   );
-
   this.gameIsPaused = false;
 };
 
@@ -481,7 +483,7 @@ Play.prototype.checkWarps = function(x, y) {
               if (choice === 'yes') {
                 if (self.player.stats.money >= 50) {
                   self.player.stats.money -= 50;
-                  self.player.stats.hp = self.player.stats.maxHP;
+                  self.player.health = self.player.stats.maxHP;
                   self.showPopup('Thank you!!!', 'hospital');
                 } else {
                   self.showPopup('You need more money!!!', 'hospital');
@@ -610,7 +612,7 @@ Play.prototype.timerTick = function() {
   for (var index in this.mobs.entities) {
     var mob = this.mobs.entities[index];
 
-    if (mob.isAlive() && mob.sprite.alive) {
+    if (mob.alive && mob.sprite.alive) {
       mob.chooseNextMove();
     } else {
       var textureModifier = Math.floor(Math.random() * 2) + 1;
@@ -640,7 +642,7 @@ Play.prototype.showDamage = function(damage, x, y, color) {
 Play.prototype.update = function() {
   var self = this;
 
-  if (!this.player) {
+  if (!this.player || this.gameIsPaused) {
     return;
   }
 
@@ -673,7 +675,7 @@ Play.prototype.update = function() {
     }, 200);
   }
 
-  if (!this.player.isAlive()) {
+  if (!this.player.alive) {
     this.player.sprite.animations.play('die');
     this.showMessage(this.taunt + '. You were slain!', {
       accept: function() {
@@ -682,7 +684,7 @@ Play.prototype.update = function() {
     });
   }
 
-  if (!this.player.moving && this.player.isAlive() && !this.player.isAttacking) {
+  if (!this.player.moving && this.player.alive && !this.player.isAttacking) {
     this.game.input.update();
 
     if (this.keys.spaceBar.isDown && !this.player.isAttacking) {
@@ -747,4 +749,55 @@ Play.prototype.update = function() {
       this.player.sprite.animations.play('look_' + this.player.orientation);
     }
   }
+};
+
+Play.prototype.bindGamePad = function() {
+  var self = this;
+
+  if (this.gameIsPaused) {
+    return;
+  }
+
+  $('#upButton').on('touchstart', function(event) {
+    self.cursors.up.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.cursors.up.isDown = false;
+    event.stopPropagation();
+  });
+  $('#downButton').on('touchstart', function(event) {
+    self.cursors.down.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.cursors.down.isDown = false;
+    event.stopPropagation();
+  });
+  $('#leftButton').on('touchstart', function(event) {
+    self.cursors.left.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.cursors.left.isDown = false;
+    event.stopPropagation();
+  });
+  $('#rightButton').on('touchstart', function(event) {
+    self.cursors.right.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.cursors.right.isDown = false;
+    event.stopPropagation();
+  });
+
+  $('#actionButton').on('touchstart', function(event) {
+    self.keys.spaceBar.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.keys.spaceBar.isDown = false;
+    event.stopPropagation();
+  });
+
+  $('#optionButton').on('touchstart', function(event) {
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    event.stopPropagation();
+  });
 };

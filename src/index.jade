@@ -1,6 +1,7 @@
 doctype html
 html(lang='en')
     head
+        link(rel='stylesheet', href='css/font-awesome.css')
         link(rel='stylesheet', href='css/style.css')
         meta(charset='utf-8')
         meta(name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0")
@@ -30,12 +31,18 @@ html(lang='en')
             #optionButtons
 
         #virtualPad
-            button#upButton Up
-            button#downButton Down
-            button#leftButton Left
-            button#rightButton Right
-            button#actionButton A
-            button#optionButton B
+            #upButton
+                i.fa.fa-chevron-up
+            #downButton
+                i.fa.fa-chevron-down
+            #leftButton
+                i.fa.fa-chevron-left
+            #rightButton
+                i.fa.fa-chevron-right
+            #actionButton
+                i.fa.fa-bolt
+            #optionButton
+                i.fa.fa-shield
 
         script(src='js/phaser.min.js')
         script(src='js/zepto.min.js')

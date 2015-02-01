@@ -5,6 +5,7 @@
   "devDependencies": {
     "zepto": "~1.1.6",
     "zepto-detect": "*",
-    "phaser": "latest"
+    "phaser": "latest",
+    "fontawesome": "~4.3.0"
   }
 }
