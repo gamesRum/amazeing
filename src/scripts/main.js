@@ -39,7 +39,6 @@ window.onresize = function() {
     game.updateMapSize();
     $('#virtualPad').hide();
   }
-  console.log(window.mobileMode);
 };
 
 console.log('%c We are the %c#gamesRum ', 'background: #222; color: #aabb55', 'background: #222; color: #aaffee');
