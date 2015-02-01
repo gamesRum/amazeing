@@ -2,8 +2,8 @@
 
 var Being = require('./being');
 
-var Mob = module.exports = function(id, game, player, x, y, money, level, bounds, sprite, entities, walkable) {
-  Being.call(this);
+var Mob = module.exports = function(gameInstance, id, player, x, y, money, level, bounds, sprite, entities, walkable) {
+  Being.call(this, gameInstance);
   this.stats.money = money;
   this.stats.str = Math.ceil((level - 1) * 0.5);
   this.stats.level = level;
@@ -15,7 +15,7 @@ var Mob = module.exports = function(id, game, player, x, y, money, level, bounds
   this.location.y = y;
   this.walkable = walkable;
   this.orientation = 0;
-  this.game = game;
+  this.gameInstance = gameInstance;
   this.entities = entities;
   this.id = id;
   this.player = player;
@@ -102,7 +102,7 @@ Mob.prototype.chooseNextMove = function() {
   }
 
   if(this.validCell(this.location.x, this.location.y)) {
-    this.game.add.tween(this.sprite).to(
+    this.gameInstance.add.tween(this.sprite).to(
       {
         x: this.location.x * 32,
         y: this.location.y * 32
