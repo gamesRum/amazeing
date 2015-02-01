@@ -1,56 +1,74 @@
-background-color = #0f0f0f
+@import 'vars'
 
 html, body
-  background-color background-color
   height 100%
-  font-family Helvetica, Arial, sans-serif
   margin 0
   padding 0
   width 100%
 
-#content
-  display block
+
+body
+  background $background-color url('../assets/img/background.png') repeat center center
+  font-family Helvetica, Arial, sans-serif
+  font-size 1rem
+
+  *
+    box-sizing border-box
+
+  :focus
+    opacity 1
+    outline 0
+
+  button
+    opacity 0.5
+
+/* Homepage */
+
+
+#game-window
+  /*display block*/
 
 #status
   color #ccc
   display none
-  font-size 11px
+  font-size 0.7rem
   left 0
-  padding 5px 10px
+  padding 0.5rem 0
   position fixed
-  width 100%
+  text-align center
   top 0
+  width 100%
 
   span
     background rgba(0,0,0,0.5)
-    border-radius 3px
-    line-height 20px
-    margin-right 10px
-    padding 5px
+    border-radius 0.25rem
+    line-height 1rem
+    margin 0 0.1rem
+    padding 0.2rem
 
     strong
       color #fff
 
 #popupBox
-  bottom 0
+  bottom 50%
   color #ccc
   display block
-  font-size: 18px
+  font-size: 1rem
   left 0
   opacity 0
-  padding 20px 10px
+  padding 1rem
   position fixed
   width 100%
 
   blockquote
     background rgba(255,255,255,0.8)
-    border-radius 3px
+    border-radius 0.25rem
     color #000
     display inline-block
     float right
-    line-height 20px
-    margin 0 20px
-    padding 10px 20px
+    line-height 1rem
+    margin 0 1rem
+    padding 1rem
 
     strong
       color #fff
@@ -69,7 +87,7 @@ html, body
 
   p
     float right
-    margin-right 15px
+    margin-right 1rem
 
   div
     background url('/assets/img/rpg_faces_just_because_by_eternitymaze-d5mq78r.png') top left no-repeat
@@ -101,17 +119,17 @@ html, body
 #messageBox
   background rgba(0,0,0,0.5)
   border 1px solid #ccc
-  box-shadow 2px 2px 10px #000
+  box-shadow 0.25rem 0.25rem 1rem #000
   color #fff
-  font-size 24px
-  left 25%
-  margin 0 auto
+  font-size 1rem
+  left 15%
   text-align center
   top 20%
   opacity 0
-  padding 20px
+  padding 0.5rem
   position fixed
-  width 50%
+  width 70%
+  z-index 950
 
   &.hidden
     -webkit-transition: opacity 0.5s ease-in;
@@ -125,15 +143,18 @@ html, body
     -o-transition: opacity 0.5s ease-in;
     opacity 1
 
+  #messageText
+    margin 1rem auto
+
   button
     background #030
     border #333
-    border-radius 3px
+    border-radius 0.25rem
     color #fff
     cursor pointer
     display none
-    font-size 18px
-    margin 0 5px
+    font-size 1rem
+    margin 0 0.25rem
     text-transform capitalize
 
     &:hover
@@ -143,3 +164,68 @@ html, body
   #optionButtons
     button
       display inline-block
+
+#virtualPad
+  bottom 0
+  display block
+  height 7rem
+  left 0
+  position fixed
+  width 100%
+  z-index 900
+  -webkit-touch-callout none
+  -webkit-user-select none
+  -khtml-user-select none
+  -moz-user-select none
+  -ms-user-select none
+  user-select none
+
+  div
+    background none
+    border 2px solid rgba(255, 255, 255, 0.3)
+    border-radius 50%
+    color rgba(255, 255, 255, 0.5)
+    display block
+    font-size 1.5rem
+    height 3.5rem
+    left 1rem
+    line-height 3.5rem
+    opacity 1
+    position absolute
+    text-align center
+    top 0
+    width 3.5rem
+    z-index 910
+
+    &:active
+      background-color rgba(255, 255, 255, 0.3)
+
+  i
+    z-index 905
+
+  #upButton
+    top -2rem
+
+  #upButton
+  #downButton
+    left 4rem
+
+  #downButton
+    top 3rem
+
+  #leftButton
+  #rightButton
+    top 0.5rem
+
+  #rightButton
+    left 7rem
+
+  #actionButton
+  #optionButton
+    left auto
+    right 1rem
+    top 0rem
+
+  #optionButton
+    right 3rem
+    top 3rem

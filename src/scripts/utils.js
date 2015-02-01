@@ -27,7 +27,7 @@ utils.randomInt = function(max, min) {
  * @return stirng - name
  */
 utils.generateRandomName = function() {
-  return this.adjetives[this.randomInt(this.adjetives.length)] + ' ' + this.nouns[this.randomInt(this.nouns.length)];
+  return this.adjetives[this.randomInt(this.adjetives.length - 1)] + ' ' + this.nouns[this.randomInt(this.nouns.length - 1)];
 };
 
 utils.adjetives = [
@@ -46,7 +46,7 @@ utils.nouns = [
 ];
 
 utils.getTaunt = function() {
-  return this.taunts[this.randomInt(this.taunts.length)];
+  return this.taunts[this.randomInt(this.taunts.length - 1)];
 };
 
 utils.taunts = [

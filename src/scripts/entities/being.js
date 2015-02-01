@@ -1,6 +1,8 @@
 'use strict';
 
-var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
+var Being = module.exports = function(gameInstance, maxHP, maxSP, money, bagSize) {
+  Phaser.Sprite.call(this, gameInstance);
+
   this.bag = {
     items: [],
     size: bagSize || 10
@@ -27,12 +29,12 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
 
   this.moving = false;
   this.sprite = null;
+  this.health = maxHP || 100;
   this.stats =  {
     level: 1,
     maxHP: maxHP || 100,
     maxSP: maxSP || 100,
     money: money || 0,
-    hp: maxHP || 100,
     sp: maxSP || 100,
     str: 2,
     def: 1
@@ -42,16 +44,20 @@ var Being = module.exports = function(maxHP, maxSP, money, bagSize) {
   this.width= 32;
 };
 
+Being.prototype = Object.create(Phaser.Sprite.prototype);
+Being.prototype.constructor = Being;
+
 Being.prototype.damage = function(str) {
-  if(this.stats.hp) {
-    var hit = (str * 2) - Math.round(this.stats.def * 0.5);
+  if(this.alive) {
+    var hit = Math.round((str * 1.5) - this.stats.def * 0.5);
 
-    if(hit > 0) {
-      this.stats.hp = this.stats.hp - hit;
-    }
+    Phaser.Sprite.prototype.damage.call(this, hit);
 
-    if(this.stats.hp < 0) {
-      this.stats.hp = 0;
+    /* TODO - Hardcoded tile size */
+    this.game.state.states.play.showDamage(hit, this.location.x * 32, this.location.y * 32, 'yellow');
+
+    if (0 > this.health) {
+      this.health = 0;
     }
 
     return true;
@@ -60,12 +66,8 @@ Being.prototype.damage = function(str) {
   return false;
 };
 
-Being.prototype.isAlive = function() {
-  return this.stats.hp > 0;
-};
-
 Being.prototype.update = function() {
-  if (this.hp <= 0) {
+  if (this.health <= 0) {
     this.die();
   }
 };

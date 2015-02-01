@@ -1,9 +1,11 @@
 'use strict';
 
-var World = require('../entities/world'),
-  utils = utils = require('../utils');
+var utils = utils = require('../utils'),
+  World = require('../entities/world'),
+  Player = require('../entities/player'),
+  Mob = require('../entities/mob');
 
-var Play = module.exports = function () {
+var Play = module.exports = function() {
   Phaser.State.call(this);
   this.gameWorld = new World();
 };
@@ -11,135 +13,31 @@ var Play = module.exports = function () {
 Play.prototype = Object.create(Phaser.State.prototype);
 Play.prototype.constructor = Play;
 
-var Player = require('../entities/player');
-var Mob = require('../entities/mob');
+/* Loading JSON files */
 
-Play.prototype.map = {
-  level: 1,
-  name: 'The Forest',
-  size: null,
-  tile: {
-    height: 32,
-    width: 32
-  },
-  walkable: null,
-  warps: {
-    start: {
-      level: null,
-      id: 'start',
-      x: 0,
-      y: 0
-    },
-    end: {
-      level: 2,
-      name: 'The Forest',
-      id: 'end',
-      x: 0,
-      y: 0
-    }
-  }
-};
+var tileset = require('../configs/tileset.json'),
+  weapons = require('../configs/weapons.json'),
+  animations = require('../configs/animations.json');
 
-var tileset = {
-  cavern: {
-    background: 11,
-    wall: 247,
-    enter: 403,
-    exit: 257,
-    decoration: [259]
-  },
-  snow: {
-    background: 9,
-    wall: 239,
-    enter: 403,
-    exit: 249,
-    decoration: [220, 232, 233, 235]
-  },
-  desert: {
-    background: 81,
-    wall: 231,
-    enter: 403,
-    exit: 421,
-    decoration: [279, 295, 308, 401]
-  },
-  castle: {
-    background: 15,
-    wall: 270,
-    enter: 403,
-    exit: 21,
-    decoration: [212]
-  },
-  forest: {
-    background: 6,
-    wall: 246,
-    enter: 403,
-    exit: 257,
-    decoration: [224, 225, 226, 227, 240, 241, 242, 243]
-  }
-},
-weapons = {
-  ogre: 87,
-  human: 70,
-  zombie: 112
-},
-animations = {
-  ogre: {
-    attack: [56,60,64,68],
-    look_down: [56],
-    look_left: [60],
-    look_right: [64],
-    look_up: [68],
-    walk_down: [56,57,58,59],
-    walk_left: [60,61,62,63],
-    walk_right: [64,65,66,67],
-    walk_up: [68,69,70,71],
-    damage: [72,73,74,75],
-    die: [83]
-  },
-  human: {
-    attack: [0,4,8,12],
-    look_down: [0],
-    look_left: [4],
-    look_right: [8],
-    look_up: [12],
-    walk_down: [0, 1, 2, 3],
-    walk_left: [4, 5, 6, 7],
-    walk_right: [8, 9, 10, 11],
-    walk_up: [12, 13, 14, 15],
-    damage: [16, 17, 18, 19],
-    die: [27]
-  },
-  zombie: {
-    attack: [28,32,36,40],
-    look_down: [28],
-    look_left: [32],
-    look_right: [36],
-    look_up: [40],
-    walk_down: [28, 29, 30, 31],
-    walk_left: [32, 33, 34, 35],
-    walk_right: [36, 37, 38, 39],
-    walk_up: [40,41,42,43],
-    damage: [44, 45, 46, 47],
-    die: [55]
-  }
-};
+/**********************/
 
 var $statusBar = document.getElementById('status'),
-    $messageBox = document.getElementById('messageBox'),
-    $popupBox = document.getElementById('popupBox'),
-    $text = document.getElementById('messageText'),
-    $optionButtons = document.getElementById('optionButtons'),
-    $buttons = {
-      accept: document.getElementById('acceptButton'),
-      cancel: document.getElementById('cancelButton'),
-      buy: document.getElementById('buyButton'),
-      sell: document.getElementById('sellButton')
-    };
+  $messageBox = document.getElementById('messageBox'),
+  $popupBox = document.getElementById('popupBox'),
+  $text = document.getElementById('messageText'),
+  $optionButtons = document.getElementById('optionButtons'),
+  $buttons = {
+    accept: document.getElementById('acceptButton'),
+    cancel: document.getElementById('cancelButton'),
+    buy: document.getElementById('buyButton'),
+    sell: document.getElementById('sellButton')
+  };
 
+Play.prototype.updateStats = function() {
+  if (this.gameIsPaused) {
+    return;
+  }
 
-Play.prototype.player = new Player(20, 'joan', 'male');
-
-Play.prototype.updateStats = function () {
   $statusBar.innerHTML = '';
 
   function addText(label, value) {
@@ -149,28 +47,31 @@ Play.prototype.updateStats = function () {
     $statusBar.appendChild($span);
   }
 
-  addText('Map', this.map.name + ' ( deep: ' + (this.gameWorld.currentRoomIndex + 1) + ' )');
-  addText('HP', this.player.stats.hp);
+  addText(this.map.name, 'deep ' + (this.gameWorld.currentRoomIndex + 1));
+  if (!this.player) {
+    return;
+  }
+  addText('HP', this.player.health);
   addText('STR', this.player.stats.str);
   addText('DEF', this.player.stats.def);
   addText('$', this.player.stats.money);
 };
 
-Play.prototype.hideMessage = function ($element) {
-  if(!$element) {
+Play.prototype.hideMessage = function($element) {
+  if (!$element) {
     $element = $messageBox;
   }
 
   $element.className = "hidden";
 };
 
-Play.prototype.showMessage = function (message, callbacks) {
+Play.prototype.showMessage = function(message, callbacks) {
   $messageBox.className = "visible";
   $text.innerHTML = message;
   $optionButtons.innerHTML = '';
 
   function setButton($element, callback) {
-    if(callback) {
+    if (callback) {
       $element.onclick = callbacks.accept;
       $element.style.display = "inline-block";
     } else {
@@ -184,43 +85,43 @@ Play.prototype.showMessage = function (message, callbacks) {
   setButton($buttons.buy, callbacks && callbacks.buy);
   setButton($buttons.sell, callbacks && callbacks.sell);
 
-  if(!callbacks) {
+  if (!callbacks) {
     var self = this;
-    setTimeout(function () {
+    setTimeout(function() {
       self.hideMessage()
     }, 3000);
   }
 };
 
-Play.prototype.showPopup = function (message, faceClass) {
+Play.prototype.showPopup = function(message, faceClass) {
   $statusBar.style.display = 'block';
   $popupBox.className = "visible";
 
-  if(!faceClass) {
+  if (!faceClass) {
     faceClass = this.player.race;
   }
 
   $popupBox.innerHTML = '<blockquote><div class="' + faceClass + ' "></div><p>' + message + '</p></blockquote>';
 
   var self = this;
-  setTimeout(function () {
+  setTimeout(function() {
     self.hideMessage($popupBox);
   }, 2000);
 };
 
-Play.prototype.openNPC = function (name, message, options, callback) {
+Play.prototype.openNPC = function(name, message, options, callback) {
   $messageBox.className = "visible";
   $text.innerHTML = '<h1>' + name + '</h1><p>' + message + '</p>';
   $optionButtons.innerHTML = '';
 
-  if(options) {
-    for(var index in options) {
+  if (options) {
+    for (var index in options) {
       var option = options[index],
         $optionButton = document.createElement('button'),
         self = this;
 
       $optionButton.innerHTML = option;
-      $optionButton.onclick = function(e){
+      $optionButton.onclick = function(e) {
         $optionButtons.innerText = '';
         self.hideMessage();
         callback(e.target.innerText);
@@ -228,37 +129,37 @@ Play.prototype.openNPC = function (name, message, options, callback) {
 
       $optionButtons.appendChild($optionButton);
 
-      if(index < 1) {
+      if (index < 1) {
         $optionButton.focus();
       }
     }
   }
 
-  if(!callback) {
+  if (!callback) {
     var self = this;
-    setTimeout(function () {
+    setTimeout(function() {
       self.hideMessage()
     }, 3000);
   }
 };
 
-Play.prototype.render = function () {
+Play.prototype.render = function() {
   //this.game.time.advancedTiming = true;
   //this.game.debug.text(this.game.time.fps || '--', window.innerWidth - 40, window.innerHeight - 10, "#ffffff");
   this.updateStats();
 };
 
-Play.prototype.createNpcs = function () {
+Play.prototype.createNpcs = function() {
   var npcCount = Math.round(this.map.size * 0.1);
 
-  if(this.npcsSprites) {
+  if (this.npcsSprites) {
     this.npcsSprites.destroy();
   }
 
   this.npcsSprites = this.game.add.group();
   this.npcs = [];
 
-  while(npcCount > 0) {
+  while (npcCount > 0) {
     var i = Math.floor((Math.random() * this.map.size)),
       j = Math.floor((Math.random() * this.map.size));
 
@@ -266,10 +167,10 @@ Play.prototype.createNpcs = function () {
       var npcType = Math.floor((Math.random() * 3)),
         npcSprite = this.npcsSprites;
 
-        npcSprite.x = i * this.map.tile.width;
-        npcSprite.y = j * this.map.tile.width;
-        npcSprite.create(0,0, 'tiles', 141);
-        npcSprite.create(4, -9, 'tiles', 144 + npcType).scale.setTo(0.7, 0.7);
+      npcSprite.x = i * tileset.tile_size.width;
+      npcSprite.y = j * tileset.tile_size.width;
+      npcSprite.create(0, 0, 'tiles', 141);
+      npcSprite.create(4, -9, 'tiles', 144 + npcType).scale.setTo(0.7, 0.7);
 
       this.npcs.push({
         sprite: npcSprite,
@@ -278,16 +179,16 @@ Play.prototype.createNpcs = function () {
         y: j
       });
 
-      npcCount --;
+      npcCount--;
     }
   }
 };
 
-Play.prototype.createMobs = function () {
+Play.prototype.createMobs = function() {
   var mobCount = Math.round(this.map.size * 0.5),
-      mobID = 0;
+    mobID = 0;
 
-  if(this.mobs) {
+  if (this.mobs) {
     this.mobs.destroy();
   }
 
@@ -296,14 +197,14 @@ Play.prototype.createMobs = function () {
   this.mobs.physicsBodyType = Phaser.Physics.ARCADE;
   this.mobs.entities = [];
 
-  while(mobCount > 0) {
+  while (mobCount > 0) {
     var i = Math.floor((Math.random() * this.map.size)),
       j = Math.floor((Math.random() * this.map.size));
 
     if (this.map.walkable[i][j]) {
       var mobBaseLevel = Math.floor((Math.random() * 3)),
         o = mobBaseLevel * 3,
-        mobSprite = this.mobs.create(i * this.map.tile.width, j * this.map.tile.width, 'mobs', 1);
+        mobSprite = this.mobs.create(i * tileset.tile_size.width, j * tileset.tile_size.width, 'mobs', 1);
 
       mobSprite.health = Math.round(2.5 * mobBaseLevel);
       mobSprite.customDefense = Math.round(1.2 * mobBaseLevel);
@@ -317,7 +218,7 @@ Play.prototype.createMobs = function () {
       mobSprite.animations.add('damage', [0, 1, 2], 10, true);
       mobSprite.animations.add('attack', [0, 1, 2], 10, true);
 
-      var newMob = new Mob(mobID++, this.game, this.player, i, j, (i + j) + i, i, {
+      var newMob = new Mob(this.game, mobID++, this.player, i, j, (i + j) + i, i, {
         x: this.map.size,
         y: this.map.size
       }, mobSprite, this.mobs.entities, this.map.walkable);
@@ -330,14 +231,14 @@ Play.prototype.createMobs = function () {
   }
 };
 
-Play.prototype.drawMaze = function () {
+Play.prototype.drawMaze = function() {
   var self = this,
-      biome = this.gameWorld.room.biome,
-      map = this.gameWorld.room.map,
-      map_width = 0,
-      map_height = 0;
+    biome = this.gameWorld.room.biome,
+    map = this.gameWorld.room.map,
+    map_width = 0,
+    map_height = 0;
 
-  if(this.walls) {
+  if (this.walls) {
     this.walls.destroy();
   }
 
@@ -350,15 +251,15 @@ Play.prototype.drawMaze = function () {
 
   this.showPopup('Entering ' + this.map.name);
 
-  map_width = (this.map.size + 1) * this.map.tile.width;
-  map_height = (this.map.size + 1) * this.map.tile.height;
+  map_width = (this.map.size + 1) * tileset.tile_size.width;
+  map_height = (this.map.size + 1) * tileset.tile_size.height;
   this.game.world.setBounds(0, 0, map_width, map_height);
   //this.game.add.tileSprite(0, 0, map_width, map_height, 'tiles', tileset[biome].background);
 
-  map.iterate(function (cell, y, x) {
+  map.iterate(function(cell, y, x) {
     self.map.walked [x][y] = {
       seen: false,
-      sprite: self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].background)
+      sprite: self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tileset[biome].background)
     };
 
     self.map.walked[x][y].sprite.alpha = 1;
@@ -369,23 +270,23 @@ Play.prototype.drawMaze = function () {
         var items = tileset[biome].decoration,
           tile = items[Math.floor(Math.random() * items.length)];
         if (((Math.random() * 100) + 1) > 95) {
-          self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tile);
+          self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tile);
         }
         break;
       case 2:
         if (self.map.level > 1) {
-          self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].enter);
+          self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tileset[biome].enter);
           self.map.warps.start.x = x;
           self.map.warps.start.y = y;
         }
         break;
       case 3:
-        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].exit);
+        self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tileset[biome].exit);
         self.map.warps.end.x = x;
         self.map.warps.end.y = y;
         break;
       default:
-        self.walls.create(x * self.map.tile.width, y * self.map.tile.height, 'tiles', tileset[biome].wall);
+        self.walls.create(x * tileset.tile_size.width, y * tileset.tile_size.height, 'tiles', tileset[biome].wall);
         self.map.walkable[x][y] = false;
         break;
     }
@@ -396,17 +297,17 @@ Play.prototype.drawMaze = function () {
   this.createMobs();
 
   var spawnPoint = map.getPlayerSpawnPoint(this.gameWorld.isGoingInverse);
-  this.player.sprite.position.x = spawnPoint.column * self.map.tile.width;
-  this.player.sprite.position.y = spawnPoint.row * self.map.tile.height;
+  this.player.sprite.position.x = spawnPoint.column * tileset.tile_size.width;
+  this.player.sprite.position.y = spawnPoint.row * tileset.tile_size.height;
   this.player.location.x = spawnPoint.column;
   this.player.location.y = spawnPoint.row;
   this.player.sprite.bringToTop();
   this.sword.sprite.bringToTop();
-  this.movePlayer(0,0);
+  this.movePlayer(0, 0);
 };
 
-Play.prototype.loadMap = function (map) {
-  if(!this.player.sprite) {
+Play.prototype.loadMap = function(map) {
+  if (!this.player.sprite) {
 
     this.player.sprite = this.game.add.sprite(this.player.width, this.player.height, 'avatar');
     this.player.sprite.position.x = this.player.location.x * this.player.width;
@@ -429,13 +330,13 @@ Play.prototype.loadMap = function (map) {
 
     var weaponOffset = this.player.stats.str - 1;
 
-    if(weaponOffset > 10) {
+    if (weaponOffset > 10) {
       weaponOffset = 10;
     }
 
     this.sword = {};
     this.sword.sprite = this.game.add.sprite(0, 0, 'items', weapons[this.player.race] + weaponOffset);
-    this.sword.sprite.scale.setTo(0.7,0.7);
+    this.sword.sprite.scale.setTo(0.7, 0.7);
     this.sword.sprite.name = 'sword';
     this.sword.sprite.physicsBodyType = Phaser.Physics.ARCADE;
     this.sword.sprite.exists = false;
@@ -455,16 +356,28 @@ Play.prototype.initKeyboard = function() {
   };
 };
 
-Play.prototype.create = function () {
+Play.prototype.create = function() {
   var self = this;
+
+  this.gameIsPaused = true;
+  this.map = {
+    warps: {
+      start: {
+        x: 0,
+        y: 0
+      },
+      end: {
+        x: 0,
+        y: 0
+      }
+    }
+  };
+
   this.timer = {
     turn: true
   };
 
   this.taunt = utils.getTaunt();
-
-  this.player.game = this.game;
-  this.player.showDamage = this.showDamage;
 
   this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -472,16 +385,16 @@ Play.prototype.create = function () {
   this.game.stage.disableVisibilityChange = true;
   this.game.stage.backgroundColor = 0x222222;
 
-  this.textGroup = this.game.add.group();
-
   this.openNPC(
-    'Welcome & Don\'t Die!',
-    'Select your race: <br/> <small>Every race has its own bonus and maybe it has money!</small>',
+    'Welcome to <span style="color:#f76000">Amazeing</span>!',
+    'Move it with the cursor keys, action it with space bar! <br/> ' +
+    'Now select your race, every one has its own bonus and maybe it has money',
     ['ogre', 'human', 'zombie'],
     function(choice) {
-      switch(choice) {
+      var properties;
+      switch (choice) {
         case 'ogre':
-          self.player.stats = {
+          properties = {
             money: 0,
             maxHP: 100,
             hp: 5,
@@ -490,7 +403,7 @@ Play.prototype.create = function () {
           };
           break;
         case 'zombie':
-          self.player.stats = {
+          properties = {
             money: 300,
             maxHP: 50,
             hp: 1,
@@ -500,7 +413,7 @@ Play.prototype.create = function () {
           break;
         default:
           choice = 'human';
-          self.player.stats = {
+          properties = {
             money: 100,
             maxHP: 100,
             hp: 10,
@@ -509,30 +422,34 @@ Play.prototype.create = function () {
           };
       }
 
-      self.player.race = choice;
+      properties.name = 'Guy';
+      properties.genre = 'male';
+      self.player = new Player(self.game, properties);
       self.showMessage('Prepare for battle!');
       self.loadMap(self.map);
       self.initKeyboard();
+      self.bindGamePad();
     }
   );
+  this.gameIsPaused = false;
 };
 
-Play.prototype.startMoving = function () {
+Play.prototype.startMoving = function() {
   this.player.moving = true;
 };
 
-Play.prototype.stopMoving = function () {
+Play.prototype.stopMoving = function() {
   this.player.moving = false;
 };
 
-Play.prototype.validCell = function (x, y) {
+Play.prototype.validCell = function(x, y) {
   if (!this.map.walkable[x][y]) {
     return false;
   }
   return true;
 };
 
-Play.prototype.checkWarps = function (x, y) {
+Play.prototype.checkWarps = function(x, y) {
   for (var index in this.map.warps) {
     var warp = this.map.warps[index];
 
@@ -555,7 +472,7 @@ Play.prototype.checkWarps = function (x, y) {
     if (npc.x === x && npc.y === y) {
       var self = this;
 
-      switch(npc.type) {
+      switch (npc.type) {
         case 0:
           self.showPopup('Hello, darling!!!', 'hospital');
           this.openNPC(
@@ -563,10 +480,10 @@ Play.prototype.checkWarps = function (x, y) {
             'Do you want to get healthy? <br/> <small>It will cost you $50</small>',
             ['yes', 'no'],
             function(choice) {
-              if(choice === 'yes') {
-                if(self.player.stats.money >= 50) {
+              if (choice === 'yes') {
+                if (self.player.stats.money >= 50) {
                   self.player.stats.money -= 50;
-                  self.player.stats.hp = self.player.stats.maxHP;
+                  self.player.health = self.player.stats.maxHP;
                   self.showPopup('Thank you!!!', 'hospital');
                 } else {
                   self.showPopup('You need more money!!!', 'hospital');
@@ -582,8 +499,8 @@ Play.prototype.checkWarps = function (x, y) {
             'Do you want to improve your armor STR+1? <br/> <small>It will cost you $100</small>',
             ['yes', 'no'],
             function(choice) {
-              if(choice === 'yes') {
-                if(self.player.stats.money >= 100) {
+              if (choice === 'yes') {
+                if (self.player.stats.money >= 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.str += 1;
                   self.showPopup('Thank you!!!', 'armor');
@@ -601,8 +518,8 @@ Play.prototype.checkWarps = function (x, y) {
             'Do you want to improve your shield DEF+1? <br/> <small>It will cost you $100</small>',
             ['yes', 'no'],
             function(choice) {
-              if(choice === 'yes') {
-                if(self.player.stats.money >= 100) {
+              if (choice === 'yes') {
+                if (self.player.stats.money >= 100) {
                   self.player.stats.money -= 100;
                   self.player.stats.def += 1;
                   self.showPopup('Thank you!!!', 'shield');
@@ -618,7 +535,7 @@ Play.prototype.checkWarps = function (x, y) {
   }
 };
 
-Play.prototype.calculateFOV = function () {
+Play.prototype.calculateFOV = function() {
   //var self= this;
   //function watch(x, y) {
   //  var cell = self.map.walked[x][y];
@@ -639,7 +556,7 @@ Play.prototype.calculateFOV = function () {
   //watch(x-1, y);
 };
 
-Play.prototype.movePlayer = function (left, top, action) {
+Play.prototype.movePlayer = function(left, top, action) {
   var locationBackup = {
     x: this.player.location.x,
     y: this.player.location.y
@@ -674,8 +591,8 @@ Play.prototype.movePlayer = function (left, top, action) {
 
     var animation = this.game.add.tween(this.player.sprite).to(
       {
-        x: this.player.location.x * this.map.tile.width,
-        y: this.player.location.y * this.map.tile.height
+        x: this.player.location.x * tileset.tile_size.width,
+        y: this.player.location.y * tileset.tile_size.height
       },
       200, Phaser.Easing.linear, true
     );
@@ -691,15 +608,15 @@ Play.prototype.movePlayer = function (left, top, action) {
   }
 };
 
-Play.prototype.timerTick = function () {
+Play.prototype.timerTick = function() {
   for (var index in this.mobs.entities) {
     var mob = this.mobs.entities[index];
 
-    if (mob.isAlive() && mob.sprite.alive) {
+    if (mob.alive && mob.sprite.alive) {
       mob.chooseNextMove();
     } else {
       var textureModifier = Math.floor(Math.random() * 2) + 1;
-      var newMob = this.mobs.create(mob.location.x * this.map.tile.width, mob.location.y * this.map.tile.width, 'tiles', 240 + textureModifier);
+      var newMob = this.mobs.create(mob.location.x * tileset.tile_size.width, mob.location.y * tileset.tile_size.width, 'tiles', 240 + textureModifier);
       this.mobs.entities.splice(index, 1);
       newMob.customDeath = true;
       mob.sprite.parent.remove(mob.sprite);
@@ -725,7 +642,7 @@ Play.prototype.showDamage = function(damage, x, y, color) {
 Play.prototype.update = function() {
   var self = this;
 
-  if (!this.player.sprite) {
+  if (!this.player || this.gameIsPaused) {
     return;
   }
 
@@ -758,7 +675,7 @@ Play.prototype.update = function() {
     }, 200);
   }
 
-  if (!this.player.isAlive()) {
+  if (!this.player.alive) {
     this.player.sprite.animations.play('die');
     this.showMessage(this.taunt + '. You were slain!', {
       accept: function() {
@@ -767,7 +684,7 @@ Play.prototype.update = function() {
     });
   }
 
-  if (!this.player.moving && this.player.isAlive() && !this.player.isAttacking) {
+  if (!this.player.moving && this.player.alive && !this.player.isAttacking) {
     this.game.input.update();
 
     if (this.keys.spaceBar.isDown && !this.player.isAttacking) {
@@ -832,4 +749,55 @@ Play.prototype.update = function() {
       this.player.sprite.animations.play('look_' + this.player.orientation);
     }
   }
+};
+
+Play.prototype.bindGamePad = function() {
+  var self = this;
+
+  if (this.gameIsPaused) {
+    return;
+  }
+
+  $('#upButton').on('touchstart', function(event) {
+    self.cursors.up.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.cursors.up.isDown = false;
+    event.stopPropagation();
+  });
+  $('#downButton').on('touchstart', function(event) {
+    self.cursors.down.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.cursors.down.isDown = false;
+    event.stopPropagation();
+  });
+  $('#leftButton').on('touchstart', function(event) {
+    self.cursors.left.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.cursors.left.isDown = false;
+    event.stopPropagation();
+  });
+  $('#rightButton').on('touchstart', function(event) {
+    self.cursors.right.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.cursors.right.isDown = false;
+    event.stopPropagation();
+  });
+
+  $('#actionButton').on('touchstart', function(event) {
+    self.keys.spaceBar.isDown = true;
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    self.keys.spaceBar.isDown = false;
+    event.stopPropagation();
+  });
+
+  $('#optionButton').on('touchstart', function(event) {
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    event.stopPropagation();
+  });
 };

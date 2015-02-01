@@ -72,7 +72,7 @@ gulp.task('build:audio', function() {
 
 gulp.task('build:fonts', function() {
   return gulp.src('./assets/fonts/**/*')
-    .pipe(gulp.dest('./build/assets/fonts'))
+    .pipe(gulp.dest('./build/fonts'))
     .pipe(browserSync.reload({stream: true, once: true}));
 });
 
@@ -108,7 +108,7 @@ gulp.task('build:js', function() {
 });
 
 gulp.task('build:css', function() {
-  return gulp.src('./src/stylesheets/*.styl')
+  return gulp.src(['./src/stylesheets/*.styl', './bower_components/fontawesome/css/font-awesome.css'])
     .pipe(stylus())
     .pipe(buffer())
     .pipe(gulpif(program.prod, cssmin()))
@@ -118,8 +118,13 @@ gulp.task('build:css', function() {
 
 gulp.task('build:vendors', function() {
   var bowerConfig = JSON.parse(fs.readFileSync('./.bowerrc', 'utf8'));
+  var vendors = [
+    './' + bowerConfig['directory'] + '/phaser/build/phaser*',
+    './' + bowerConfig['directory'] + '/zepto/zepto*min*',
+    './' + bowerConfig['directory'] + '/zepto-detect/zepto-detect.min.js'
+  ];
 
-  return gulp.src('./' + bowerConfig['directory'] + '/phaser/build/phaser*')
+  return gulp.src(vendors)
     .pipe(ignore('*.ts'))
     .pipe(gulp.dest('./build/js/'));
 });

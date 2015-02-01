@@ -1,8 +1,11 @@
 {
-  "name": "uberquest",
-  "version": "0.0.1",
+  "name": "amazeing",
+  "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "phaser": "latest"
+    "zepto": "~1.1.6",
+    "zepto-detect": "*",
+    "phaser": "latest",
+    "fontawesome": "~4.3.0"
   }
 }
