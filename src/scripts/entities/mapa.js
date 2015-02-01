@@ -4,9 +4,6 @@ var tiles = require('../tiles'),
   utils = require('../utils');
 
 var Mapa = module.exports = function(size) {
-  if (this.constructor === Map) {
-    throw new Error('Creating instances of Mapa class is not allowed.');
-  }
   this.size = size || 64;
   this.enter = null;
 };
