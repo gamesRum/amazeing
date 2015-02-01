@@ -428,11 +428,10 @@ Play.prototype.create = function() {
       self.showMessage('Prepare for battle!');
       self.loadMap(self.map);
       self.initKeyboard();
+      self.bindGamePad();
     }
   );
-
   this.gameIsPaused = false;
-  this.bindGamePad();
 };
 
 Play.prototype.startMoving = function() {
@@ -755,43 +754,50 @@ Play.prototype.update = function() {
 Play.prototype.bindGamePad = function() {
   var self = this;
 
-  $('#upButton').on('touchstart', function() {
+  if (this.gameIsPaused) {
+    return;
+  }
+
+  $('#upButton').on('touchstart', function(event) {
     self.cursors.up.isDown = true;
-    return false;
-  }).on('touchend', function() {
+    event.stopPropagation();
+  }).on('touchend', function(event) {
     self.cursors.up.isDown = false;
-    return false;
+    event.stopPropagation();
   });
-  $('#downButton').on('touchstart', function() {
+  $('#downButton').on('touchstart', function(event) {
     self.cursors.down.isDown = true;
-    return false;
-  }).on('touchend', function() {
+    event.stopPropagation();
+  }).on('touchend', function(event) {
     self.cursors.down.isDown = false;
-    return false;
+    event.stopPropagation();
   });
-  $('#leftButton').on('touchstart', function() {
+  $('#leftButton').on('touchstart', function(event) {
     self.cursors.left.isDown = true;
-    return false;
-  }).on('touchend', function() {
+    event.stopPropagation();
+  }).on('touchend', function(event) {
     self.cursors.left.isDown = false;
-    return false;
+    event.stopPropagation();
   });
-  $('#rightButton').on('touchstart', function() {
+  $('#rightButton').on('touchstart', function(event) {
     self.cursors.right.isDown = true;
-    return false;
-  }).on('touchend', function() {
+    event.stopPropagation();
+  }).on('touchend', function(event) {
     self.cursors.right.isDown = false;
-    return false;
+    event.stopPropagation();
   });
 
-  $('#actionButton').on('touchstart', function() {
+  $('#actionButton').on('touchstart', function(event) {
     self.keys.spaceBar.isDown = true;
-    return false;
-  }).on('touchend', function() {
+    event.stopPropagation();
+  }).on('touchend', function(event) {
     self.keys.spaceBar.isDown = false;
-    return false;
+    event.stopPropagation();
   });
 
-  $('#optionButton').on('', function() {
+  $('#optionButton').on('touchstart', function(event) {
+    event.stopPropagation();
+  }).on('touchend', function(event) {
+    event.stopPropagation();
   });
 };
