@@ -432,6 +432,7 @@ Play.prototype.create = function() {
   );
 
   this.gameIsPaused = false;
+  this.bindGamePad();
 };
 
 Play.prototype.startMoving = function() {
@@ -749,4 +750,48 @@ Play.prototype.update = function() {
       this.player.sprite.animations.play('look_' + this.player.orientation);
     }
   }
+};
+
+Play.prototype.bindGamePad = function() {
+  var self = this;
+
+  $('#upButton').on('touchstart', function() {
+    self.cursors.up.isDown = true;
+    return false;
+  }).on('touchend', function() {
+    self.cursors.up.isDown = false;
+    return false;
+  });
+  $('#downButton').on('touchstart', function() {
+    self.cursors.down.isDown = true;
+    return false;
+  }).on('touchend', function() {
+    self.cursors.down.isDown = false;
+    return false;
+  });
+  $('#leftButton').on('touchstart', function() {
+    self.cursors.left.isDown = true;
+    return false;
+  }).on('touchend', function() {
+    self.cursors.left.isDown = false;
+    return false;
+  });
+  $('#rightButton').on('touchstart', function() {
+    self.cursors.right.isDown = true;
+    return false;
+  }).on('touchend', function() {
+    self.cursors.right.isDown = false;
+    return false;
+  });
+
+  $('#actionButton').on('touchstart', function() {
+    self.keys.spaceBar.isDown = true;
+    return false;
+  }).on('touchend', function() {
+    self.keys.spaceBar.isDown = false;
+    return false;
+  });
+
+  $('#optionButton').on('', function() {
+  });
 };
