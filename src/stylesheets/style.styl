@@ -173,6 +173,12 @@ body
   position fixed
   width 100%
   z-index 900
+  -webkit-touch-callout none
+  -webkit-user-select none
+  -khtml-user-select none
+  -moz-user-select none
+  -ms-user-select none
+  user-select none
 
   div
     background none
@@ -180,39 +186,45 @@ body
     border-radius 50%
     color rgba(255, 255, 255, 0.5)
     display block
-    font-size 1.2rem
-    height 2.5rem
+    font-size 1.5rem
+    height 3.5rem
     left 1rem
-    line-height 2.5rem
+    line-height 3.5rem
     opacity 1
     position absolute
     text-align center
     top 0
-    width 2.5rem
+    width 3.5rem
+    z-index 910
+
+    &:active
+      background-color rgba(255, 255, 255, 0.3)
+
+  i
+    z-index 905
+
+  #upButton
+    top -2rem
 
   #upButton
   #downButton
-    left 3rem
+    left 4rem
 
   #downButton
-    top 4rem
+    top 3rem
 
   #leftButton
   #rightButton
-    top 2rem
+    top 0.5rem
 
   #rightButton
-    left 5rem
+    left 7rem
 
   #actionButton
   #optionButton
-    font-size 1.5rem
-    height 3.5rem
     left auto
-    line-height 3.7rem
     right 1rem
     top 0rem
-    width 3.5rem
 
   #optionButton
     right 3rem
