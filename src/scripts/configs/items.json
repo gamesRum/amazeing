@@ -1,0 +1,116 @@
+{
+  "potHP": {
+    "name": "Pot of Health",
+    "description": "This pot recovers 10 points of HP",
+    "sprites": {
+      "tileset": "tiles",
+      "images": 26
+    },
+    "stats": {
+      "requirements": {
+        "str": 1
+      },
+      "increase": {
+        "hp": 10
+      },
+      "decrease": {
+        "sp": 1
+      }
+    },
+    "taunts": {
+      "allow": [
+        "You feel recovered and full of energy.",
+        "Now you want to kill some mobs!"
+      ],
+      "deny": [
+        "You are not strong enough to drink this beverage!",
+        "You don't have the skills to have a beer shot!"
+      ]
+    },
+    "type": "potion"
+  },
+  "potSP": {
+    "name": "Pot of Power",
+    "description": "This pot recovers 10 points of SP and HP",
+    "sprites": {
+      "tileset": "tiles",
+      "images": 30
+    },
+    "stats": {
+      "requirements": {
+        "hp": 10
+      },
+      "increase": {
+        "hp": 10
+      }
+    },
+    "type": "potion"
+  },
+  "sword": {
+    "description": "This is an old and ugly sword.",
+    "name": "Basic Sword",
+    "sprites": {
+      "tileset": "tiles",
+      "image": 70
+    },
+    "stats": {
+      "requirements": {
+        "str": 1
+      },
+      "increase": {
+        "str": 2
+      },
+      "decrease": {
+        "def": 1
+      }
+    },
+    "taunts": {
+      "allow": [
+        "Now you have a sword.",
+        "Let' kill some mobs!"
+      ],
+      "deny": [
+        "You are a weak player! Can't even use this old sword",
+        "You need to make some exercise to use this sword"
+      ]
+    },
+    "type": "weapon"
+  },
+  "peak": {
+    "description": "This is an old and ugly peak.",
+    "name": "Basic Peak",
+    "sprites": {
+      "tileset": "tiles",
+      "image": 112
+    },
+    "stats": {
+      "increase": {
+        "str": 5
+      }
+    },
+    "taunts": {
+      "allow": [
+        "Now you have a peak.",
+        "Let' kill some mobs!"
+      ],
+      "deny": [
+        "You are a weak player! Can't even use this old sword"
+      ]
+    },
+    "type": "weapon"
+  },
+  "peak": {
+    "description": "This is an old and ugly katar.",
+    "name": "Basic Katar",
+    "sprites": {
+      "tileset": "tiles",
+      "image": 87
+    },
+    "stats": {
+      "increase": {
+        "def": 1
+      }
+    },
+    "type": "weapon"
+  }
+}
