@@ -3,22 +3,9 @@
 var Being = module.exports = function(gameInstance, maxHP, maxSP, money, bagSize) {
   Phaser.Sprite.call(this, gameInstance);
 
-  this.bag = {
-    items: [],
-    size: bagSize || 10
-  };
-
   this.name = 'Mob';
 
   this.animating = false;
-
-  this.inventory= {
-    body: null,
-    head: null,
-    ring: null,
-    shield: null,
-    weapon: null
-  };
 
   this.location= {
     x: 1,

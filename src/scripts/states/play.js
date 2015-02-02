@@ -454,7 +454,7 @@ Play.prototype.checkWarps = function(x, y) {
     var warp = this.map.warps[index];
 
     if (warp.x === x && warp.y === y) {
-      if (warp.level) {
+      if (index === 'end') {
         this.gameWorld.goNextLevel();
         this.loadMap(warp);
       } else {
