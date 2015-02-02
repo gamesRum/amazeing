@@ -14,6 +14,19 @@ var Player = module.exports = function(gameInstance, properties) {
   this.stats.maxHP = properties.maxHP;
   this.stats.str = properties.str;
   this.stats.def = properties.def;
+
+  this.bag = {
+    items: [],
+    size: properties.bagSize || 10
+  };
+
+  this.using= {
+    body: null,
+    head: null,
+    ring: null,
+    shield: null,
+    weapon: null
+  };
 };
 
 Player.prototype = Object.create(Being.prototype);
