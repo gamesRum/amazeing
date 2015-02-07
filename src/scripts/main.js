@@ -1,8 +1,8 @@
 'use strict';
 
 var sizesDesktop = {
-    width: 1024,
-    height: 600
+    width: window.innerWidth,
+    height: window.innerHeight
   },
   game = new Phaser.Game({
     parent: 'game-window'
@@ -34,6 +34,7 @@ window.onresize = function() {
   if ($.os.phone) {
     window.mobileMode = true;
     game.updateMapSize();
+    $('#virtualPad').show();
   } else {
     window.mobileMode = false;
     game.updateMapSize();
