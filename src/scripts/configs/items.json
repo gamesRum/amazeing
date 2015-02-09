@@ -46,6 +46,23 @@
     },
     "type": "potion"
   },
+  "flyWing": {
+    "name": "Fly Wing",
+    "description": "This wing can teleport you to a random position in current map",
+    "sprites": {
+      "tileset": "tiles",
+      "images": 350
+    },
+    "stats": {
+      "requirements": {
+        "hp": 50
+      },
+      "executes": [
+        "randomPosition"
+      ]
+    },
+    "type": "potion"
+  },
   "sword": {
     "description": "This is an old and ugly sword.",
     "name": "Basic Sword",
@@ -99,7 +116,7 @@
     },
     "type": "weapon"
   },
-  "peak": {
+  "katar": {
     "description": "This is an old and ugly katar.",
     "name": "Basic Katar",
     "sprites": {

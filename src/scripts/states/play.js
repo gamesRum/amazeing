@@ -17,7 +17,8 @@ Play.prototype.constructor = Play;
 
 var tileset = require('../configs/tileset.json'),
   weapons = require('../configs/weapons.json'),
-  animations = require('../configs/animations.json');
+  animations = require('../configs/animations.json'),
+  items = require('../configs/items.json');
 
 /**********************/
 
@@ -224,6 +225,11 @@ Play.prototype.createMobs = function() {
       }, mobSprite, this.mobs.entities, this.map.walkable);
       this.mobs.entities.push(newMob);
 
+      mobSprite.bag = {
+        potHP: 2,
+        potSP: 1,
+        flyWing: 1
+      };
       mobSprite.customMoney = newMob.stats.money;
 
       mobCount--;
@@ -664,6 +670,18 @@ Play.prototype.update = function() {
 
     if (!mob.alive) {
       self.player.stats.money += mob.customMoney;
+      console.log('>>', mob.bag, self.player.bag);
+
+      for(var item in mob.bag) {
+        console.log(mob.bag[item]);
+        if(self.player.bag.items[item]) {
+          self.player.bag.items[item] += mob.bag[item];
+        } else{
+          self.player.bag.items[item] = mob.bag[item];
+        }
+      }
+
+      console.log('>>=', self.player.bag);
     }
 
   }, null, this);
